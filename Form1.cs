@@ -56,26 +56,7 @@ namespace NIR
         public Form1()
         {
             InitializeComponent();
-           /* Chart chart = chart1;
-            //кладем его на форму и растягиваем на все окно.
-           // chart.Parent = this;
-            
-            //добавляем в Chart область для рисования графиков, их может быть
-            //много, поэтому даем ей имя.
-            chart.ChartAreas.Add(new ChartArea("Math functions"));
-            //Создаем и настраиваем набор точек для рисования графика, в том
-            //не забыв указать имя области на которой хотим отобразить этот
-            //набор точек.
-            
-            Series mySeriesOfPoint = new Series("Sinus");
-            mySeriesOfPoint.ChartType = SeriesChartType.Line;
-            mySeriesOfPoint.ChartArea = "Math functions";
-            for (double x = -Math.PI; x <= Math.PI; x += Math.PI / 10.0)
-            {
-                mySeriesOfPoint.Points.AddXY(x, Math.Sin(x));
-            }
-            //Добавляем созданный набор точек в Chart
-            chart.Series.Add(mySeriesOfPoint);*/
+          
         }
 
         private void Start_Click(object sender, EventArgs e)
