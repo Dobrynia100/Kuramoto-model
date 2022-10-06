@@ -64,6 +64,22 @@ namespace NIR
             graph1();
             graph2();
         }
+
+        private void выйтиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("вы уверены ?", "Решение СЛАУ методом простых итераций", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dialogResult == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            AboutBox1 about = new AboutBox1();
+            about.Show();
+        }
+
     }
-   
+
 }
