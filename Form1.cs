@@ -13,10 +13,15 @@ namespace NIR
 {
     public partial class Form1 : Form
     {
-        void graph1()
+        double Xvalue=0;
+        void graph1(double XV)
         {
             double x, y;
-            x = trackBar1.Value;
+            if (XV != 0)
+            {
+                x = XV;
+            }
+            else x = trackBar1.Value;
             this.chart1.Series[0].Points.Clear();
             while (x <= 40)
             {
@@ -42,13 +47,13 @@ namespace NIR
        
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            graph1();
-            label1.Text = "Sin(x)=" + trackBar1.Value;
+            graph1(Xvalue);
+            textBox1.Text = Convert.ToString(trackBar1.Value);
         }
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
             graph2();
-            label2.Text = "Cos(x)="+trackBar2.Value;
+            textBox2.Text = Convert.ToString(trackBar2.Value);
         }
         
 
@@ -61,7 +66,8 @@ namespace NIR
 
         private void Start_Click(object sender, EventArgs e)
         {
-            graph1();
+            Xvalue = Convert.ToDouble(textBox1.Text);
+            graph1(Xvalue);
             graph2();
         }
 
