@@ -13,21 +13,63 @@ namespace NIR
 {
     public partial class Form1 : Form
     {
-        double Xvalue=0;
-        void graph1(double XV)
+        double sigma = 0.01;
+       
+        int N=3,A=1;
+        void graph1(int N,double sigma)
         {
-            double x, y;
-            if (XV != 0)
+            double t,Oj,y,sum=0;
+            Random rnd = new Random();
+            double[] O = new double[N];
+            double[] Oi = new double[N];
+            double[] w=new double[N];
+            //double[] y = new double[N];
+            for (int i=0; i < N; i++)
             {
-                x = XV;
+                Oi[i] = rnd.NextDouble() * (2 * Math.PI);
             }
-            else x = trackBar1.Value;
-            this.chart1.Series[0].Points.Clear();
-            while (x <= 40)
+             //   textBox3.Text =Convert.ToString(O);
+            for (int k = 0; k < N; k++)
             {
-                y = Math.Sin(x);
-                this.chart1.Series[0].Points.AddXY(x, y);
-                x += 1;
+                w[k] = rnd.NextDouble() + 9;
+            }
+          //  textBox4.Text = Convert.ToString(w);
+           
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (i != j)
+                    {
+                        sum += A * sigma * Math.Sin(Oi[j] - Oi[i]);
+                    }
+                   
+                }
+                O[i] = w[i] + sum;
+                sum = 0;
+
+            }
+            t = 0;
+            label6.Text = Convert.ToString(Oi[0]);
+            label7.Text = Convert.ToString(Oi[1]);
+            label8.Text = Convert.ToString(Oi[2]);
+            this.chart1.Series[0].Points.Clear();
+           
+            for (int i = 0; i < N; i++)
+            {
+                Series mySeries = new Series("O"+i);
+                mySeries.ChartType = SeriesChartType.Line;
+                chart1.Series.Add(mySeries);
+            }
+            while (t <= 10)
+            {
+                  for (int i = 0; i < N; i++)
+                 {
+                //int i = 0;
+                    y = O[i];
+                    this.chart1.Series[i].Points.AddXY(t, y);
+                }
+                t += 1;
 
             }
         }
@@ -47,7 +89,7 @@ namespace NIR
        
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            graph1(Xvalue);
+           // graph1();
             textBox1.Text = Convert.ToString(trackBar1.Value);
         }
         private void trackBar2_ValueChanged(object sender, EventArgs e)
@@ -66,8 +108,10 @@ namespace NIR
 
         private void Start_Click(object sender, EventArgs e)
         {
-            Xvalue = Convert.ToDouble(textBox1.Text);
-            graph1(Xvalue);
+          //  N = Convert.ToInt32(textBox1.Text);
+           // sigma = Convert.ToDouble(textBox2.Text);
+           
+            graph1(N,sigma);
             graph2();
         }
 
@@ -86,6 +130,10 @@ namespace NIR
             about.Show();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Type.Text = "Все со всеми";
+        }
     }
 
 }
