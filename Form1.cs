@@ -16,6 +16,42 @@ namespace NIR
         double sigma = 0.01;
        
         int N=3,A=1;
+        static double Function(double x)
+        {
+            return Math.Sin(x);
+        }
+
+        static double GetRandomNumber(double minimum, double maximum)
+        {
+            Random random = new Random();
+            return random.NextDouble() * (maximum - minimum) + minimum;
+        }
+        static double Integral(int a, int b, int n)
+        {
+            double total = 0;
+            double yMax = 0;
+            double x;
+            double funct;
+
+            int i = 0;
+            do
+            {
+                x = GetRandomNumber(a, b);
+                funct = Math.Abs(Function(x));
+                if (yMax > funct)
+                {
+                    total += funct;
+                    i++;
+                }
+                else
+                {
+                    yMax = funct * 2;
+                    i = 0;
+                }
+            } while (i < n);
+
+            return (b - a) * total / n;
+        }
         void graph1(int N,double sigma)
         {
             double t,Oj,y,sum=0;
@@ -61,6 +97,7 @@ namespace NIR
                 mySeries.ChartType = SeriesChartType.Line;
                 chart1.Series.Add(mySeries);
             }
+            //todo почитать про методы интегрирования? треугольный.монте-карло.формула парабол (Симпсона)
             while (t <= 10)
             {
                   for (int i = 0; i < N; i++)
