@@ -17,37 +17,7 @@ namespace NIR
         double dt = 0.01;
         int N=4,A=1;
     
-        static double GetRandomNumber(double minimum, double maximum)
-        {
-            Random random = new Random();
-            return random.NextDouble() * (maximum - minimum) + minimum;
-        }
-         double Integral(int a, int b, double dif)
-        {
-            double total = 0;
-            double yMax = 0;
-            double x;
-            double funct;
-
-            int i = 0;
-            do
-            {
-                x = GetRandomNumber(a, b);
-                funct = Math.Abs(Math.Sin(dif));
-                if (yMax > funct)
-                {
-                    total += funct;
-                    i++;
-                }
-                else
-                {
-                    yMax = funct * 2;
-                    i = 0;
-                }
-            } while (i < N);
-
-            return (b - a) * total / N;
-        }
+      
         void graph1(int N,double sigma)
         {
             double t,Oj,y=0,sum=0;
@@ -56,10 +26,7 @@ namespace NIR
             double[] O = new double[N];
             double[] Oi = new double[N];
             double[] w=new double[N];
-            // int t=1;
-            //double[] y = new double[N];
-            // this.chart1.Series[0].Points.Clear();
-
+        
             for (int i = 0; i < N; i++)
             {
                 Series mySeries = new Series("O" + i);
@@ -82,26 +49,9 @@ namespace NIR
                 w[k] = rnd.NextDouble()*(10.5-9.5) + 9.5;
               //  richTextBox1.Text +=  Convert.ToString(w[k]) + "-";
             }
-            //  textBox4.Text = Convert.ToString(w);
+       
             double dif;
-            /*
-             for (int i = 0; i < N; i++)
-             {
-
-                for (int j = 0; j < N; j++)
-                {
-                    if (i != j)
-                    {
-                        dif = Oi[j] - Oi[i];
-
-                        sum += A * sigma * Math.Sin(Oi[j] - Oi[i]);
-                    }
-
-                }
-                O[i] = w[i] + sum;
-                sum = 0;
-
-             }*/
+          
             t = 0;
           
             t = dt;
@@ -126,9 +76,9 @@ namespace NIR
 
 
                     }
-                     O[i] = (w[i] + sum);// или O[i] += (w[i] + sum); ?
+                     O[i] = (w[i] + sum);
                     // richTextBox1.Text += " [" + i + "] " + Convert.ToString(O[i]) + "-";
-                  //  y = O[i]*dt*1; или что то в друхе
+             
                         y+=O[i] * dt;
 
                 
@@ -138,9 +88,7 @@ namespace NIR
                 {
                     Oi[i] = O[i];
                 }
-                //int i = 0;
-                //y = O[i];
-                //this.chart1.Series[i].Points.AddXY(t, y);
+            
 
                 t += dt;
 
@@ -172,8 +120,7 @@ namespace NIR
         }
         private void trackBar3_ValueChanged(object sender, EventArgs e)
         {
-          //  this.chart1.ChartAreas[0].AxisX.Maximum = trackBar3.Value;
-            //this.chart1.ChartAreas[0].AxisX2.Maximum = trackBar3.Value;
+     
             graph1(N, sigma);
         }
 
