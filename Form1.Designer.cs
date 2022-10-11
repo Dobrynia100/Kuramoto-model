@@ -30,12 +30,12 @@ namespace NIR
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -69,6 +69,7 @@ namespace NIR
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.label5 = new System.Windows.Forms.Label();
             this.Type = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -82,51 +83,50 @@ namespace NIR
             // 
             // chart1
             // 
-            chartArea13.AxisX.Interval = 0.0025D;
-            chartArea13.AxisX.IntervalAutoMode = System.Windows.Forms.DataVisualization.Charting.IntervalAutoMode.VariableCount;
-            chartArea13.AxisX.Maximum = 0.025D;
-            chartArea13.AxisX.MaximumAutoSize = 65F;
-            chartArea13.AxisX.Minimum = 0D;
-            chartArea13.AxisX.Title = "t";
-            chartArea13.AxisX.TitleAlignment = System.Drawing.StringAlignment.Far;
-            chartArea13.AxisX.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            chartArea13.AxisY.Maximum = 12D;
-            chartArea13.AxisY.Minimum = 0D;
-            chartArea13.AxisY.TextOrientation = System.Windows.Forms.DataVisualization.Charting.TextOrientation.Horizontal;
-            chartArea13.AxisY.Title = "Oi";
-            chartArea13.AxisY.TitleAlignment = System.Drawing.StringAlignment.Far;
-            chartArea13.AxisY.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            chartArea13.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea13);
-            legend13.Name = "Legend1";
-            this.chart1.Legends.Add(legend13);
+            chartArea1.AxisX.IntervalAutoMode = System.Windows.Forms.DataVisualization.Charting.IntervalAutoMode.VariableCount;
+            chartArea1.AxisX.Maximum = 2D;
+            chartArea1.AxisX.MaximumAutoSize = 65F;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.Title = "t";
+            chartArea1.AxisX.TitleAlignment = System.Drawing.StringAlignment.Far;
+            chartArea1.AxisX.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            chartArea1.AxisY.Maximum = 12D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.AxisY.TextOrientation = System.Windows.Forms.DataVisualization.Charting.TextOrientation.Horizontal;
+            chartArea1.AxisY.Title = "Oi";
+            chartArea1.AxisY.TitleAlignment = System.Drawing.StringAlignment.Far;
+            chartArea1.AxisY.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(3, 0);
             this.chart1.Name = "chart1";
-            series13.BorderWidth = 3;
-            series13.ChartArea = "ChartArea1";
-            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series13.Legend = "Legend1";
-            series13.Name = "Oi(t)";
-            this.chart1.Series.Add(series13);
+            series1.BorderWidth = 3;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Legend = "Legend1";
+            series1.Name = "Oi(t)";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(950, 346);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
             // chart2
             // 
-            chartArea14.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea14);
-            legend14.MaximumAutoSize = 20F;
-            legend14.Name = "Legend1";
-            this.chart2.Legends.Add(legend14);
+            chartArea2.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea2);
+            legend2.MaximumAutoSize = 20F;
+            legend2.Name = "Legend1";
+            this.chart2.Legends.Add(legend2);
             this.chart2.Location = new System.Drawing.Point(23, 368);
             this.chart2.Name = "chart2";
-            series14.BorderWidth = 3;
-            series14.ChartArea = "ChartArea1";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series14.Legend = "Legend1";
-            series14.Name = "Cos(x)";
-            this.chart2.Series.Add(series14);
+            series2.BorderWidth = 3;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "Cos(x)";
+            this.chart2.Series.Add(series2);
             this.chart2.Size = new System.Drawing.Size(914, 131);
             this.chart2.TabIndex = 1;
             this.chart2.Text = "chart2";
@@ -155,19 +155,19 @@ namespace NIR
             // сохранитьToolStripMenuItem
             // 
             this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.сохранитьToolStripMenuItem.Text = "Сохранить";
             // 
             // загрузитьToolStripMenuItem
             // 
             this.загрузитьToolStripMenuItem.Name = "загрузитьToolStripMenuItem";
-            this.загрузитьToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.загрузитьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.загрузитьToolStripMenuItem.Text = "Загрузить";
             // 
             // выйтиToolStripMenuItem
             // 
             this.выйтиToolStripMenuItem.Name = "выйтиToolStripMenuItem";
-            this.выйтиToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.выйтиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.выйтиToolStripMenuItem.Text = "Выйти";
             this.выйтиToolStripMenuItem.Click += new System.EventHandler(this.выйтиToolStripMenuItem_Click);
             // 
@@ -182,6 +182,7 @@ namespace NIR
             // 
             this.groupBox1.AutoSize = true;
             this.groupBox1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.groupBox1.Controls.Add(this.richTextBox1);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.lable5);
             this.groupBox1.Controls.Add(this.lable4);
@@ -199,7 +200,7 @@ namespace NIR
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Location = new System.Drawing.Point(200, 544);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(589, 206);
+            this.groupBox1.Size = new System.Drawing.Size(589, 245);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры";
@@ -207,11 +208,11 @@ namespace NIR
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(156, 37);
+            this.label4.Location = new System.Drawing.Point(6, 149);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(24, 13);
+            this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 15;
-            this.label4.Text = "W=";
+            this.label4.Text = "tmax=";
             this.label4.Visible = false;
             // 
             // lable5
@@ -297,7 +298,7 @@ namespace NIR
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(186, 112);
+            this.textBox6.Location = new System.Drawing.Point(186, 72);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(100, 20);
             this.textBox6.TabIndex = 5;
@@ -305,15 +306,14 @@ namespace NIR
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(186, 74);
+            this.textBox5.Location = new System.Drawing.Point(186, 34);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 20);
             this.textBox5.TabIndex = 4;
-            this.textBox5.Visible = false;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(186, 34);
+            this.textBox4.Location = new System.Drawing.Point(51, 146);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(100, 20);
             this.textBox4.TabIndex = 3;
@@ -427,6 +427,14 @@ namespace NIR
             this.Type.Text = "Все со всеми";
             this.Type.Visible = false;
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(185, 104);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(393, 122);
+            this.richTextBox1.TabIndex = 16;
+            this.richTextBox1.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -495,6 +503,7 @@ namespace NIR
         private System.Windows.Forms.Label Type;
         private System.Windows.Forms.Label lable5;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 
