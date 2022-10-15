@@ -8,25 +8,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-
+using System.IO;
 namespace NIR
 {
     public partial class Form1 : Form
     {
         double sigma = 0.01;
         double dt = 0.01;
-        int N=4,A=1;
+       static int N=4,A=1;
         double tmax = 10;
-        int mult=1500;
-     
+        int mult=1;
+        double[] Oi = new double[N+1];
+        double[] w = new double[N+1];
         void graph1(int N,double sigma)
         {
             double t=0,Oj,sum=0;
             Random rnd = new Random();
             //int max = 5;
             double[] O = new double[N];
-            double[] Oi = new double[N];
-            double[] w=new double[N];
+            
             double[] y = new double[N];
         
             for (int i = 0; i < N; i++)
@@ -159,6 +159,11 @@ namespace NIR
             //    t1++;
             // }
             t = dt;
+            for (int i = 0; i < N; i++)
+            {
+                O[i] = Oi[i];
+            }
+
             while (t < tmax)
             {
                 for (int i = 0; i < N; i++)
@@ -169,7 +174,7 @@ namespace NIR
                     {
                         if (j != i)
                         {
-                            dif = (Oi[j] - Oi[i]);
+                            dif = (O[j] - O[i]);
 
                             sum += A * sigma * Math.Sin(dif) * mult;
 
@@ -183,16 +188,16 @@ namespace NIR
                         test++;
                         richTextBox1.Text += '\n';
                     }*/
-                    O[i] = Oi[i] + (w[i] + sum)*dt;
+                    y[i] = O[i] + (w[i] + sum)*dt;
                    
                     this.chart1.Series[i].Points.AddXY(t1, O[i]);
                 }
                 for (int i = 0; i < N; i++)
                 {
-                    Oi[i] = O[i];
-                }
-                
-                test = 0;
+                    O[i] = y[i];
+                 }
+
+            test = 0;
                 t += dt;//t+=1;
                 t1++;
 
@@ -227,16 +232,31 @@ namespace NIR
      
             graph1(N, sigma);
         }
-
-
+        static int num1 = 5,num2=7;
+        TextBox[] textBoxes = new TextBox[num1];
+        Label[] labels = new Label[num2];
         public Form1()
         {
             InitializeComponent();
-           textBox1.Text = Convert.ToString(N);
+            
+            textBox1.Text = Convert.ToString(N);
             textBox2.Text = Convert.ToString(sigma);
             textBox3.Text = Convert.ToString(dt);
             textBox4.Text = Convert.ToString(tmax);
             textBox5.Text = Convert.ToString(mult);
+            textBoxes[0] = textBox1;
+            textBoxes[1] = textBox2;
+            textBoxes[2] = textBox3;
+            textBoxes[3] = textBox4;
+            textBoxes[4] = textBox5;
+         
+            labels[0] = label3;
+            labels[1] = lable4;
+            labels[2] = label4;
+            labels[3] = lable5;
+            labels[4] = label5;
+            labels[5] = Type;
+            labels[6] = label6;
         }
 
         private void Start_Click(object sender, EventArgs e)
@@ -271,6 +291,71 @@ namespace NIR
                 Application.Exit();
             }
         }
+        private void save(object sender, EventArgs e)
+        {
+
+            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "")
+            {
+                MessageBox.Show("нет всех данных\r\n заполните пустые ячейки", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+
+            SaveFileDialog sf;
+            sf = new SaveFileDialog();
+            sf.Filter = "Text files(*.txt)|*.txt| All files(*.*)|*.*";
+            string filename;
+            string[] inf = new string[num1+N];
+            sf.ShowDialog();
+            filename = sf.FileName;
+            for (int i = 0; i < N; i++)
+            {
+                inf[i] = Convert.ToString(Oi[i]) + '-' + Convert.ToString(w[i]);
+            }
+                for (int i = 0; i < num1; i++)
+            {
+                inf[i+N] = textBoxes[i].Text;
+            }
+                try
+            {
+                
+                    File.WriteAllLines(filename, inf);
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("wrong name/path", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
+        }
+        private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog of;
+            of = new OpenFileDialog();
+            of.InitialDirectory = "c:\\";
+            of.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            string text;
+            if (of.ShowDialog() == DialogResult.OK)
+            {
+                var fileStream = of.OpenFile();
+                StreamReader reader = new StreamReader(fileStream);
+                           
+                for (int i = 0; i < N+num1; i++)
+                {
+                    text = reader.ReadLine();
+                    // Oi[i] = Convert.ToDouble(text.Split(' '));//.Select(double.Parse).ToArray();
+                    richTextBox1.Text += text + " - o ";
+                    if (i >= N)
+                    {
+                        textBoxes[i-N].Text = text;
+                    }
+                    // w = text.Split(' ').Select(double.Parse).ToArray();
+                    // Oi[i] = text.Split('-').Select(double.Parse).ToArray();
+                }
+                
+            }
+        }
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -280,18 +365,14 @@ namespace NIR
 
         private void button1_Click(object sender, EventArgs e)
         {
-            textBox1.Visible = true;
-            textBox2.Visible = true;
-            textBox3.Visible = true;
-            textBox4.Visible = true;
-            label3.Visible = true;
-            lable4.Visible = true;
-            label4.Visible = true;
-            lable5.Visible = true;
-            label5.Visible = true;
-            Type.Visible = true;
-            
-            Type.Text = "Все со всеми";
+           
+            for (int i = 0; i <= 4; i++)
+            {
+                textBoxes[i].Visible = true;
+                labels[i].Visible = true;
+            }
+            labels[5].Visible = true;
+            labels[5].Text = "Все со всеми";
             
         }
     }
