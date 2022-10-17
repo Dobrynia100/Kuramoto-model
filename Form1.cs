@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.IO;
+using System.Globalization;
 namespace NIR
 {
     public partial class Form1 : Form
@@ -20,6 +21,7 @@ namespace NIR
         int mult=1;
         double[] Oi = new double[N+1];
         double[] w = new double[N+1];
+        bool downl = false;
         void graph1(int N,double sigma)
         {
             double t=0,Oj,sum=0;
@@ -41,27 +43,36 @@ namespace NIR
             //Oi[1] = 0.710908815279564;
             //Oi[2] = 1.87267642803626;
             //Oi[3] = 1.48154033368296;
+            if (downl == false)
+            {
+                for (int i = 0; i < N; i++)
+                {
+                    Oi[i] = rnd.NextDouble() * (2 * Math.PI);
+                    // richTextBox1.Text +=  Convert.ToString(Oi[i]) + " - o";
+                    y[i] = Oi[i];
+                    this.chart1.Series[i].Points.AddXY(0, y[i]);
+                }
 
-            for (int i=0; i < N; i++)
-             {
-                 Oi[i] = rnd.NextDouble() * (2 * Math.PI);           
-                 // richTextBox1.Text +=  Convert.ToString(Oi[i]) + " - o";
-                 y[i] = Oi[i];
-                 this.chart1.Series[i].Points.AddXY(0, y[i]);
-             }
 
-
-            //   textBox3.Text =Convert.ToString(O);
-            //w[0] = 9.91044653645272;
-            //w[1] = 9.73098717687232;
-            //w[2] = 10.3641021851749;
-            //w[3] = 9.86498762730741;
-             for (int k = 0; k < N; k++)
-             {
-                 w[k] = rnd.NextDouble()*(10.5-9.5) + 9.5;
-                // richTextBox1.Text +=  Convert.ToString(w[k]) + " - w";
-             }
-
+                //   textBox3.Text =Convert.ToString(O);
+                //w[0] = 9.91044653645272;
+                //w[1] = 9.73098717687232;
+                //w[2] = 10.3641021851749;
+                //w[3] = 9.86498762730741;
+                for (int k = 0; k < N; k++)
+                {
+                    w[k] = rnd.NextDouble() * (10.5 - 9.5) + 9.5;
+                    // richTextBox1.Text +=  Convert.ToString(w[k]) + " - w";
+                }
+            }
+            else
+            {
+                for (int i = 0; i < N; i++)
+                {
+                    y[i] = Oi[i];
+                    this.chart1.Series[i].Points.AddXY(0, y[i]);
+                }
+            }
             double dif=0;
 
             int test = 0;
@@ -329,13 +340,14 @@ namespace NIR
 
 
         }
+        
         private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog of;
             of = new OpenFileDialog();
             of.InitialDirectory = "c:\\";
             of.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            string text;
+            string text,tex1,tex2;
             if (of.ShowDialog() == DialogResult.OK)
             {
                 var fileStream = of.OpenFile();
@@ -343,15 +355,23 @@ namespace NIR
                            
                 for (int i = 0; i < N+num1; i++)
                 {
-                    text = reader.ReadLine();
-                    // Oi[i] = Convert.ToDouble(text.Split(' '));//.Select(double.Parse).ToArray();
-                    richTextBox1.Text += text + " - o ";
-                    if (i >= N)
+                    text = Convert.ToString(reader.ReadLine());
+                    if (i < N)
+                    {
+                        tex1 =text.Split(' ')[0];
+                    tex2 = text.Split(' ')[1];
+                    
+                        Oi[i] = Convert.ToDouble(tex1);
+                        richTextBox1.Text += Oi[i] + " - o ";
+                        w[i] = Convert.ToDouble(tex2);
+                        richTextBox1.Text += w[i] + " - w ";
+                    }
+                        if (i >= N)
                     {
                         textBoxes[i-N].Text = text;
                     }
-                    // w = text.Split(' ').Select(double.Parse).ToArray();
-                    // Oi[i] = text.Split('-').Select(double.Parse).ToArray();
+                    downl = true;
+                    
                 }
                 
             }
