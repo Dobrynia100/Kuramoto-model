@@ -16,21 +16,46 @@ namespace NIR
     {
         double sigma = 0.01;
         double dt = 0.01;
-       static int N=4,A=1;
+        int N=4,A=1;
         double tmax = 10;
         int mult=1;
-        double[] Oi = new double[N+1];
-        double[] w = new double[N+1];
         bool downl = false;
+        Random rnd = new Random();
+        double[] getO(int N)
+        {
+            
+            double[] Oi = new double[N + 1];
+             for (int i = 0; i < N; i++)
+                {
+                    Oi[i] = rnd.NextDouble() * (2 * Math.PI);
+                richTextBox2.Text += Convert.ToString(Oi[i])+" \n";
+            }
+            
+            return Oi;
+        }
+        double[] getw(int N)
+        {
+          
+            double[] w = new double[N + 1];
+            
+                for (int i = 0; i < N; i++)
+                {
+                    w[i] = rnd.NextDouble() * (10.5 - 9.5) + 9.5;
+                richTextBox3.Text += Convert.ToString(w[i])+" \n";
+            }
+            
+            return w;
+        }
         void graph1(int N,double sigma)
         {
             double t=0,Oj,sum=0;
-            Random rnd = new Random();
+            
             //int max = 5;
             double[] O = new double[N];
-            
+           // double[] Oi = new double[N + 1];
+            double[] w = new double[N + 1];
             double[] y = new double[N];
-        
+          
             for (int i = 0; i < N; i++)
             {
                 Series mySeries = new Series("O" + i);
@@ -39,43 +64,44 @@ namespace NIR
                 chart1.Series.Add(mySeries);
 
             }
-            //  Oi[0] = 5.72580022079391;
-            //Oi[1] = 0.710908815279564;
-            //Oi[2] = 1.87267642803626;
-            //Oi[3] = 1.48154033368296;
+            // Oi[0] = 5.72580022079391;
+            //Oi[1] = 5.710908815279564;
+            //Oi[2] = 5.87267642803626;
+            //Oi[3] = 3.48154033368296;
             if (downl == false)
             {
+                O=getO(N);
+                w = getw(N);
                 for (int i = 0; i < N; i++)
                 {
-                    Oi[i] = rnd.NextDouble() * (2 * Math.PI);
+                   
                     // richTextBox1.Text +=  Convert.ToString(Oi[i]) + " - o";
-                    y[i] = Oi[i];
+                    y[i] = O[i];
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
-
 
                 //   textBox3.Text =Convert.ToString(O);
                 //w[0] = 9.91044653645272;
                 //w[1] = 9.73098717687232;
                 //w[2] = 10.3641021851749;
                 //w[3] = 9.86498762730741;
-                for (int k = 0; k < N; k++)
-                {
-                    w[k] = rnd.NextDouble() * (10.5 - 9.5) + 9.5;
-                    // richTextBox1.Text +=  Convert.ToString(w[k]) + " - w";
-                }
+               
             }
             else
             {
+                string o,w1;
                 for (int i = 0; i < N; i++)
                 {
-                    y[i] = Oi[i];
+                    o = richTextBox2.Text;
+                    w1= richTextBox3.Text;
+                    O[i] =Convert.ToDouble(o.Split(' ')[i]);
+                    y[i] = O[i];
+                    w[i]= Convert.ToDouble(w1.Split(' ')[i]);
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
             }
-            double dif=0;
 
-            int test = 0;
+
 
             /*  t = dt;
               while (t < tmax)
@@ -120,7 +146,7 @@ namespace NIR
 
               }
             */
-            int t1=0;
+
             //t = dt;
             //double xi, k1, k2, k3, k4, k5, k6;
             //while (t1 < tmax)
@@ -169,13 +195,15 @@ namespace NIR
             //    t += dt;
             //    t1++;
             // }
+            int t1 = 0;
             t = dt;
-            for (int i = 0; i < N; i++)
-            {
-                O[i] = Oi[i];
-            }
+            double dif = 0;
+            //for (int i = 0; i < N; i++)
+            //{
+            //    O[i] = Oi[i];
+            //}
 
-            while (t < tmax)
+            while (t1 < tmax)
             {
                 for (int i = 0; i < N; i++)
                 {
@@ -187,7 +215,7 @@ namespace NIR
                         {
                             dif = (O[j] - O[i]);
 
-                            sum += A * sigma * Math.Sin(dif) * mult;
+                            sum += A * sigma * Math.Sin(dif) ;
 
                         }
 
@@ -201,17 +229,31 @@ namespace NIR
                     }*/
                     y[i] = O[i] + (w[i] + sum)*dt;
                    
-                    this.chart1.Series[i].Points.AddXY(t1, O[i]);
+                    this.chart1.Series[i].Points.AddXY(t*tmax, O[i]);
                 }
                 for (int i = 0; i < N; i++)
                 {
                     O[i] = y[i];
                  }
 
-            test = 0;
+           
                 t += dt;//t+=1;
                 t1++;
 
+            }
+            richTextBox1.Text += " Матрица сигма \n";
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (j != i)
+                    {
+                        richTextBox1.Text += ' ' + Convert.ToString(sigma);
+                    }
+                    else
+                    { richTextBox1.Text += " " + "0"; }
+                }
+                richTextBox1.Text += '\n';
             }
         }
         void graph2()
@@ -268,6 +310,7 @@ namespace NIR
             labels[4] = label5;
             labels[5] = Type;
             labels[6] = label6;
+          
         }
 
         private void Start_Click(object sender, EventArgs e)
@@ -316,21 +359,22 @@ namespace NIR
             sf.Filter = "Text files(*.txt)|*.txt| All files(*.*)|*.*";
             string filename;
             string[] inf = new string[num1+N];
+           
             sf.ShowDialog();
             filename = sf.FileName;
-            for (int i = 0; i < N; i++)
+            inf[0] = textBoxes[0].Text;
+           
+            
+                inf[1] = richTextBox2.Text+ richTextBox3.Text;
+            
+           
+            for (int i = 1; i < num1; i++)
             {
-                inf[i] = Convert.ToString(Oi[i]) + '-' + Convert.ToString(w[i]);
-            }
-                for (int i = 0; i < num1; i++)
-            {
-                inf[i+N] = textBoxes[i].Text;
+                inf[i+1] = textBoxes[i].Text;
             }
                 try
             {
-                
-                    File.WriteAllLines(filename, inf);
-                
+                 File.WriteAllLines(filename, inf);
             }
             catch (Exception ex)
             {
@@ -352,23 +396,29 @@ namespace NIR
             {
                 var fileStream = of.OpenFile();
                 StreamReader reader = new StreamReader(fileStream);
-                           
-                for (int i = 0; i < N+num1; i++)
+                N = Convert.ToInt32(reader.ReadLine()); 
+                textBoxes[0].Text =Convert.ToString(N);
+                for (int i = 1; i < 2*N+num1; i++)
                 {
-                    text = Convert.ToString(reader.ReadLine());
-                    if (i < N)
-                    {
-                        tex1 =text.Split(' ')[0];
-                    tex2 = text.Split(' ')[1];
+                    text = reader.ReadLine();
+                 
                     
-                        Oi[i] = Convert.ToDouble(tex1);
-                        richTextBox1.Text += Oi[i] + " - o ";
-                        w[i] = Convert.ToDouble(tex2);
-                        richTextBox1.Text += w[i] + " - w ";
-                    }
-                        if (i >= N)
+                    if (i<= N)
                     {
-                        textBoxes[i-N].Text = text;
+                       // tex1 =text.Split(' ')[0];
+                   // tex2 = text.Split(' ')[1];
+                    
+                      //  Oi[i] = Convert.ToDouble(tex1);
+                        richTextBox2.Text += text;
+                      //  w[i] = Convert.ToDouble(tex2);
+                        
+                    }
+                    else if(i>N && i<=2*N)
+                    { richTextBox3.Text += text; }else
+                        if (i > 2*N+1)
+                    {
+                        richTextBox1.Text += text;
+                        textBoxes[i-2*N-1].Text = text;
                     }
                     downl = true;
                     
