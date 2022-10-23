@@ -36,6 +36,8 @@ namespace NIR
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -45,7 +47,11 @@ namespace NIR
             this.выйтиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.lable5 = new System.Windows.Forms.Label();
@@ -71,8 +77,6 @@ namespace NIR
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.label5 = new System.Windows.Forms.Label();
             this.Type = new System.Windows.Forms.Label();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
             this.menuStrip1.SuspendLayout();
@@ -117,22 +121,54 @@ namespace NIR
             // 
             // chart2
             // 
+            chartArea2.AxisX.Minimum = 0D;
+            chartArea2.AxisY.Minimum = 0D;
             chartArea2.Name = "ChartArea1";
             this.chart2.ChartAreas.Add(chartArea2);
+            legend2.Alignment = System.Drawing.StringAlignment.Center;
+            legend2.AutoFitMinFontSize = 6;
+            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
+            legend2.LegendStyle = System.Windows.Forms.DataVisualization.Charting.LegendStyle.Column;
             legend2.MaximumAutoSize = 20F;
             legend2.Name = "Legend1";
+            legend2.TitleAlignment = System.Drawing.StringAlignment.Near;
             this.chart2.Legends.Add(legend2);
-            this.chart2.Location = new System.Drawing.Point(23, 368);
+            this.chart2.Location = new System.Drawing.Point(157, 94);
             this.chart2.Name = "chart2";
+            this.chart2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            series2.BackImageTransparentColor = System.Drawing.Color.Black;
+            series2.BackSecondaryColor = System.Drawing.Color.Black;
+            series2.BorderColor = System.Drawing.Color.Transparent;
             series2.BorderWidth = 3;
             series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedArea;
+            series2.Color = System.Drawing.Color.Black;
             series2.Legend = "Legend1";
-            series2.Name = "Cos(x)";
+            series2.Name = "1";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedArea;
+            series3.Color = System.Drawing.Color.White;
+            series3.Legend = "Legend1";
+            series3.Name = "0";
+            series3.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series3.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StackedArea;
+            series4.Color = System.Drawing.Color.Black;
+            series4.IsVisibleInLegend = false;
+            series4.Legend = "Legend1";
+            series4.Name = "2";
+            series4.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series4.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
             this.chart2.Series.Add(series2);
-            this.chart2.Size = new System.Drawing.Size(914, 131);
+            this.chart2.Series.Add(series3);
+            this.chart2.Series.Add(series4);
+            this.chart2.Size = new System.Drawing.Size(176, 147);
             this.chart2.TabIndex = 1;
             this.chart2.Text = "chart2";
+            this.chart2.Visible = false;
             // 
             // menuStrip1
             // 
@@ -187,10 +223,12 @@ namespace NIR
             // 
             this.groupBox1.AutoSize = true;
             this.groupBox1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.groupBox1.Controls.Add(this.chart2);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.richTextBox3);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.richTextBox2);
-            this.groupBox1.Controls.Add(this.richTextBox1);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.lable5);
             this.groupBox1.Controls.Add(this.lable4);
@@ -208,10 +246,39 @@ namespace NIR
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Location = new System.Drawing.Point(200, 544);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(589, 255);
+            this.groupBox1.Size = new System.Drawing.Size(622, 260);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(531, 70);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(40, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Нач W";
+            this.label8.Visible = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(408, 69);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(40, 13);
+            this.label7.TabIndex = 9;
+            this.label7.Text = "Нач. O";
+            this.label7.Visible = false;
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.Location = new System.Drawing.Point(534, 94);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.Size = new System.Drawing.Size(82, 132);
+            this.richTextBox3.TabIndex = 18;
+            this.richTextBox3.Text = "";
+            this.richTextBox3.Visible = false;
             // 
             // label6
             // 
@@ -221,14 +288,25 @@ namespace NIR
             this.label6.Size = new System.Drawing.Size(65, 13);
             this.label6.TabIndex = 17;
             this.label6.Text = "Множитель";
+            this.label6.Visible = false;
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Location = new System.Drawing.Point(411, 94);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.Size = new System.Drawing.Size(103, 132);
+            this.richTextBox2.TabIndex = 9;
+            this.richTextBox2.Text = "";
+            this.richTextBox2.Visible = false;
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(185, 104);
+            this.richTextBox1.Location = new System.Drawing.Point(805, 386);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(148, 122);
             this.richTextBox1.TabIndex = 16;
             this.richTextBox1.Text = "";
+            this.richTextBox1.Visible = false;
             // 
             // label4
             // 
@@ -292,7 +370,7 @@ namespace NIR
             // 
             // trackBar3
             // 
-            this.trackBar3.Location = new System.Drawing.Point(343, 121);
+            this.trackBar3.Location = new System.Drawing.Point(339, 117);
             this.trackBar3.Maximum = 100;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Size = new System.Drawing.Size(213, 45);
@@ -421,8 +499,8 @@ namespace NIR
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.chart2);
             this.panel1.Controls.Add(this.chart1);
+            this.panel1.Controls.Add(this.richTextBox1);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(967, 511);
@@ -452,22 +530,6 @@ namespace NIR
             this.Type.TabIndex = 8;
             this.Type.Text = "Все со всеми";
             this.Type.Visible = false;
-            // 
-            // richTextBox2
-            // 
-            this.richTextBox2.Location = new System.Drawing.Point(339, 104);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(103, 132);
-            this.richTextBox2.TabIndex = 9;
-            this.richTextBox2.Text = "";
-            // 
-            // richTextBox3
-            // 
-            this.richTextBox3.Location = new System.Drawing.Point(448, 104);
-            this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(82, 132);
-            this.richTextBox3.TabIndex = 18;
-            this.richTextBox3.Text = "";
             // 
             // Form1
             // 
@@ -541,6 +603,8 @@ namespace NIR
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.RichTextBox richTextBox3;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
     }
 }
 

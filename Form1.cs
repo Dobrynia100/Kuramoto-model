@@ -17,7 +17,7 @@ namespace NIR
         double sigma = 0.01;
         double dt = 0.01;
         int N=4,A=1;
-        double tmax = 10;
+        double tmax = 2000;
         int mult=1;
         bool downl = false;
         Random rnd = new Random();
@@ -101,51 +101,6 @@ namespace NIR
                 }
             }
 
-
-
-            /*  t = dt;
-              while (t < tmax)
-              {
-                  for (int i = 0; i < N; i++)
-                  {
-
-                      sum = 0;
-                      for (int j = 0; j < N; j++)
-                      {
-                          if (j != i)
-                          {
-                              dif = (Oi[j] - Oi[i]) ;
-
-                              sum += A * sigma * Math.Sin(dif)* mult ;                                                                          
-
-                          }
-
-                      }
-                      if (test < 4 && t <= 0.03)
-                      {
-                          //  richTextBox1.Text += " Oj= " + Oi[j] + " Oi= " + Oi[i] + " dif- " + dif + " sin-" + Math.Sin(dif) + " - ";
-                          richTextBox1.Text += i + " sum= " + sum;
-                          test++;
-                          richTextBox1.Text += '\n';
-                      }
-                      O[i] = (w[i] + sum);
-                      // richTextBox1.Text += " [" + i + "] " + Convert.ToString(O[i]) + "-";
-
-                          y[i]+=O[i]*dt;
-
-                  //4 графика колебаний осцелятора? как отдельное уранение и потом под моделью сходятся? спросить препода об этом
-                      this.chart1.Series[i].Points.AddXY(t, y[i]);
-                  }
-                 for (int i = 0; i < N; i++)
-                  {
-                      Oi[i]= O[i];
-                  }
-
-                  test = 0;
-                  t += dt;//t+=1;
-
-              }
-            */
 
             //t = dt;
             //double xi, k1, k2, k3, k4, k5, k6;
@@ -258,16 +213,32 @@ namespace NIR
         }
         void graph2()
         {
+            this.chart2.Visible = true;
             double x, y=0;
             x = 0;
-            this.chart2.Series[0].Points.Clear();
-            while (x <= 40)
+            for (int i = 0; i < 3; i++)
             {
-                y += Math.Cos(x);
-                this.chart2.Series[0].Points.AddXY(x, y);
-                x += 1;
-
+                this.chart2.Series[i].Points.Clear();
             }
+            this.chart2.Series[1].Points.Clear();
+            this.chart2.Series[2].Points.Clear();
+            this.chart2.Series[0].Name=Convert.ToString(sigma);
+            
+            this.chart2.ChartAreas[0].AxisY.Maximum = N;
+            this.chart2.ChartAreas[0].AxisX.Maximum = N;
+            for (int i = 0; i <= N; i++)
+            {
+                this.chart2.Series[0].Points.AddXY(i, N-1-i);
+                this.chart2.Series[1].Points.AddXY(i, 1);
+                this.chart2.Series[2].Points.AddXY(i, i);
+            }
+            //this.chart2.Series[0].Points.AddXY(20, 19);
+            //this.chart2.Series[1].Points.AddXY(20, 1);
+            //this.chart2.Series[2].Points.AddXY(20, 40);
+            //this.chart2.Series[0].Points.AddXY(39, 0);
+            //this.chart2.Series[1].Points.AddXY(40, 0);
+            //this.chart2.Series[2].Points.AddXY(40, 40);
+          
         }
        
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -277,6 +248,7 @@ namespace NIR
         }
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
+
             graph2();
            // textBox2.Text = Convert.ToString(trackBar2.Value);
         }
@@ -285,7 +257,7 @@ namespace NIR
      
             graph1(N, sigma);
         }
-        static int num1 = 5,num2=7;
+        static int num1 = 5,num2=9;
         TextBox[] textBoxes = new TextBox[num1];
         Label[] labels = new Label[num2];
         public Form1()
@@ -310,7 +282,9 @@ namespace NIR
             labels[4] = label5;
             labels[5] = Type;
             labels[6] = label6;
-          
+            labels[7] = label7;
+            labels[8] = label8;
+
         }
 
         private void Start_Click(object sender, EventArgs e)
@@ -404,14 +378,8 @@ namespace NIR
                  
                     
                     if (i<= N)
-                    {
-                       // tex1 =text.Split(' ')[0];
-                   // tex2 = text.Split(' ')[1];
-                    
-                      //  Oi[i] = Convert.ToDouble(tex1);
-                        richTextBox2.Text += text;
-                      //  w[i] = Convert.ToDouble(tex2);
-                        
+                    {                     
+                        richTextBox2.Text += text;                    
                     }
                     else if(i>N && i<=2*N)
                     { richTextBox3.Text += text; }else
@@ -436,12 +404,18 @@ namespace NIR
         private void button1_Click(object sender, EventArgs e)
         {
            
-            for (int i = 0; i <= 4; i++)
+            for (int i = 0; i <= 8; i++)
             {
-                textBoxes[i].Visible = true;
+                if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
-            labels[5].Visible = true;
+            //labels[5].Visible = true;
+            //labels[6].Visible = true;
+            //labels[7].Visible = true;
+            //labels[8].Visible = true;
+            richTextBox2.Visible = true;
+            richTextBox3.Visible = true;
+          
             labels[5].Text = "Все со всеми";
             
         }
