@@ -263,7 +263,7 @@ namespace NIR
         public Form1()
         {
             InitializeComponent();
-            
+           
             textBox1.Text = Convert.ToString(N);
             textBox2.Text = Convert.ToString(sigma);
             textBox3.Text = Convert.ToString(dt);
@@ -274,13 +274,14 @@ namespace NIR
             textBoxes[2] = textBox3;
             textBoxes[3] = textBox4;
             textBoxes[4] = textBox5;
-         
+
+
             labels[0] = label3;
-            labels[1] = lable4;
+            labels[1] = label1;
             labels[2] = label4;
-            labels[3] = lable5;
+            labels[3] = label2;
             labels[4] = label5;
-            labels[5] = Type;
+            labels[5] = label9;
             labels[6] = label6;
             labels[7] = label7;
             labels[8] = label8;
@@ -409,10 +410,7 @@ namespace NIR
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
-            //labels[5].Visible = true;
-            //labels[6].Visible = true;
-            //labels[7].Visible = true;
-            //labels[8].Visible = true;
+           
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
           
