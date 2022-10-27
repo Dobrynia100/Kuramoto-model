@@ -222,15 +222,17 @@ namespace NIR
             }
             this.chart2.Series[1].Points.Clear();
             this.chart2.Series[2].Points.Clear();
-            this.chart2.Series[0].Name=Convert.ToString(sigma);
+            this.chart2.Series[0].Points.Clear();
+            this.chart2.Series[1].Name=Convert.ToString(sigma);
             
             this.chart2.ChartAreas[0].AxisY.Maximum = N;
             this.chart2.ChartAreas[0].AxisX.Maximum = N;
             for (int i = 0; i <= N; i++)
             {
-                this.chart2.Series[0].Points.AddXY(i, N-1-i);
-                this.chart2.Series[1].Points.AddXY(i, 1);
-                this.chart2.Series[2].Points.AddXY(i, i);
+                this.chart2.Series[0].Points.AddXY(i, i);
+                this.chart2.Series[1].Points.AddXY(i,1);
+               
+                this.chart2.Series[2].Points.AddXY(i, N-i-1);
             }
             //this.chart2.Series[0].Points.AddXY(20, 19);
             //this.chart2.Series[1].Points.AddXY(20, 1);
