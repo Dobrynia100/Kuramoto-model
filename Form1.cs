@@ -16,11 +16,12 @@ namespace NIR
     {
         double sigma = 0.01;
         double dt = 0.01;
-        int N=4,A=1;
+        int N=4;
         double tmax = 2000;
         int mult=1;
         bool downl = false;
         Random rnd = new Random();
+        int type = 1;
         double[] getO(int N)
         {
             
@@ -55,7 +56,7 @@ namespace NIR
            // double[] Oi = new double[N + 1];
             double[] w = new double[N + 1];
             double[] y = new double[N];
-          
+            double[,] A = new double[N,N];
             for (int i = 0; i < N; i++)
             {
                 Series mySeries = new Series("O" + i);
@@ -100,56 +101,52 @@ namespace NIR
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
             }
+            if (type == 1)
+            {
+                for (int i = 0; i < N; i++)
+                {
+                    for (int j = 0; j < N; j++)
+                    {
+                        if (j != i)
+                        {
+                            A[i, j] = 1;
 
+                        }
+                        else A[i, j] = 0;
 
-            //t = dt;
-            //double xi, k1, k2, k3, k4, k5, k6;
-            //while (t1 < tmax)
-            //{
-            //    for (int i = 0; i < N; i++)
-            //    {
-            //        // Oi[i] = 1 * Math.Sin(w[i] * t + 0.3);
-            //        sum = 0;
-            //        for (int j = 0; j < N; j++)
-            //        {
-            //            if (j != i)
-            //            {
-            //                dif = (Oi[j] - Oi[i]);
+                    }
+                }
+            }
+            if(type==2)
+            {
+               
+                
+                    for (int i = 1; i < N; i++)
+                {
+                   
+                    for (int j = 1; j < N; j++)
+                    {
+                        if (j==i+1 ||j==i-1)
+                        {
+                            A[i, j] = 1;
 
-            //                sum += A * sigma * Math.Sin(dif) * mult;
+                        }
+                        else A[i, j] = 0;
 
-            //            }
-
-            //        }
-            //         if (test < 4 && t <= 0.03)
-            //          {
-            //              richTextBox1.Text += " Oi= " + Oi[i] + " dif- " + dif + " sin-" + Math.Sin(dif) + " - ";
-            //              richTextBox1.Text += i + " sum= " + sum;
-            //              test++;
-            //              richTextBox1.Text += '\n';
-            //          }
-
-            //        Oi[i] = (w[i] + sum);
-            //       /* if (Oi[i]>=Math.PI)
-            //        { Oi[i] = -Oi[i]-; }*/
-            //        if (Oi[i] > 2 * Math.PI|| (Oi[i] < -(2 * Math.PI)))
-            //        { Oi[i] = 0; }
-            //        k1 = dt * Oi[i];
-            //        k2 = dt * (Oi[i] + 0.5 * k1 + t + 0.5 * dt);
-            //        k3 = dt * (Oi[i] + 0.5 * k2 + t + 0.5 * dt);
-            //        k4 = dt * (Oi[i]+ k3+ t + dt );
-
-            //        y[i] += 1.0 / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4);
-            //        this.chart1.Series[i].Points.AddXY(t1, y[i]);
-            //    }
-            //    //for (int i = 0; i < N; i++)
-            //    //{
-            //    //    Oi[i] = O[i];
-            //    //}
-            //    test = 0;
-            //    t += dt;
-            //    t1++;
-            // }
+                    }
+                }
+                A[1, N - 1] = 1;
+                A[N - 1, 1] = 1;
+              
+                for (int i = 0; i < N; i++)
+                {
+                    A[0, i] = 1;
+                    A[i, 0] = 1;
+                }
+                A[0, 0] = 0;
+            }
+            
+      
             int t1 = 0;
             t = dt;
             double dif = 0;
@@ -170,7 +167,7 @@ namespace NIR
                         {
                             dif = (O[j] - O[i]);
 
-                            sum += A * sigma * Math.Sin(dif) ;
+                            sum += A[i,j] * sigma * Math.Sin(dif) ;
 
                         }
 
@@ -196,20 +193,31 @@ namespace NIR
                 t1++;
 
             }
-            richTextBox1.Text += " Матрица сигма \n";
+         
+            dataGridView1.RowCount = N;
+            dataGridView1.ColumnCount = N;
+            for (int i = 0; i < N; i++)
+            {
+                dataGridView1.Columns[i].Width = 40;
+                dataGridView1.Rows[i].Height = 15;
+            }
+          
             for (int i = 0; i < N; i++)
             {
                 for (int j = 0; j < N; j++)
                 {
-                    if (j != i)
+                   
+                    dataGridView1.Rows[i].Cells[j].Value = A[i,j]; 
+                    if (A[i, j] == 0)
                     {
-                        richTextBox1.Text += ' ' + Convert.ToString(sigma);
+                        dataGridView1.Rows[i].Cells[j].Style.BackColor = Color.Black;
                     }
-                    else
-                    { richTextBox1.Text += " " + "0"; }
+                    
+
+
                 }
-                richTextBox1.Text += '\n';
             }
+            
         }
         void graph2()
         {
@@ -229,17 +237,12 @@ namespace NIR
             this.chart2.ChartAreas[0].AxisX.Maximum = N;
             for (int i = 0; i <= N; i++)
             {
-                this.chart2.Series[0].Points.AddXY(i, i);
+                this.chart2.Series[0].Points.AddXY(i, 1);
                 this.chart2.Series[1].Points.AddXY(i,1);
                
                 this.chart2.Series[2].Points.AddXY(i, N-i-1);
             }
-            //this.chart2.Series[0].Points.AddXY(20, 19);
-            //this.chart2.Series[1].Points.AddXY(20, 1);
-            //this.chart2.Series[2].Points.AddXY(20, 40);
-            //this.chart2.Series[0].Points.AddXY(39, 0);
-            //this.chart2.Series[1].Points.AddXY(40, 0);
-            //this.chart2.Series[2].Points.AddXY(40, 40);
+           
           
         }
        
@@ -298,7 +301,8 @@ namespace NIR
             tmax = Convert.ToDouble(textBox4.Text);
             mult= Convert.ToInt32(textBox5.Text);
             chart1.Series.Clear();
-            richTextBox1.Clear();
+            dataGridView1.Rows.Clear();
+            dataGridView1.Columns.Clear();
             graph1(N,sigma);
             graph2();
             if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "")
@@ -358,10 +362,11 @@ namespace NIR
                 MessageBox.Show("wrong name/path", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            this.chart2.SaveImage(@"E:\\учеба\НИР\Kuramoto-model\matrix.jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
 
         }
-        
+
         private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog of;
@@ -388,7 +393,7 @@ namespace NIR
                     { richTextBox3.Text += text; }else
                         if (i > 2*N+1)
                     {
-                        richTextBox1.Text += text;
+                        //richTextBox1.Text += text;
                         textBoxes[i-2*N-1].Text = text;
                     }
                     downl = true;
@@ -404,6 +409,20 @@ namespace NIR
             about.Show();
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i <= 8; i++)
+            {
+                if (i < 5) textBoxes[i].Visible = true;
+                labels[i].Visible = true;
+            }
+            type = 2;
+            richTextBox2.Visible = true;
+            richTextBox3.Visible = true;
+
+            labels[5].Text = "Звезда";
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
            
@@ -412,7 +431,7 @@ namespace NIR
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
-           
+            type = 1;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
           
