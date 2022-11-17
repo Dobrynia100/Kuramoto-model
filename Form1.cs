@@ -193,57 +193,47 @@ namespace NIR
                 t1++;
 
             }
-         
-            dataGridView1.RowCount = N;
-            dataGridView1.ColumnCount = N;
-            for (int i = 0; i < N; i++)
-            {
-                dataGridView1.Columns[i].Width = 40;
-                dataGridView1.Rows[i].Height = 15;
-            }
-          
-            for (int i = 0; i < N; i++)
-            {
-                for (int j = 0; j < N; j++)
-                {
-                   
-                    dataGridView1.Rows[i].Cells[j].Value = A[i,j]; 
-                    if (A[i, j] == 0)
-                    {
-                        dataGridView1.Rows[i].Cells[j].Style.BackColor = Color.Black;
-                    }
-                    
-
-
-                }
-            }
-            
+           
         }
         void graph2()
         {
             this.chart2.Visible = true;
             double x, y=0;
             x = 0;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 this.chart2.Series[i].Points.Clear();
             }
             this.chart2.Series[1].Points.Clear();
-            this.chart2.Series[2].Points.Clear();
-            this.chart2.Series[0].Points.Clear();
+          
             this.chart2.Series[1].Name=Convert.ToString(sigma);
             
             this.chart2.ChartAreas[0].AxisY.Maximum = N;
             this.chart2.ChartAreas[0].AxisX.Maximum = N;
-            for (int i = 0; i <= N; i++)
+            if (type == 1)
             {
-                this.chart2.Series[0].Points.AddXY(i, 1);
-                this.chart2.Series[1].Points.AddXY(i,1);
-               
-                this.chart2.Series[2].Points.AddXY(i, N-i-1);
+                for (int i = 0; i <= N; i++)
+                {
+                    this.chart2.Series[1].Points.AddXY(i, i);
+
+                }
             }
-           
-          
+            if (type == 2)
+            {
+                for (int i = 0; i <= N; i++)
+                {
+                    for (int j = 1; j < N; j++)
+                    {
+                        if (j == i + 1 || j == i - 1)
+                        {
+                            this.chart2.Series[1].Points.AddXY(i, j);
+                        }
+                    }
+                }
+                this.chart2.Series[1].Points.AddXY(1, N-1);
+                this.chart2.Series[1].Points.AddXY(N-1, 1);          
+            }
+
         }
        
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -290,9 +280,10 @@ namespace NIR
             labels[6] = label6;
             labels[7] = label7;
             labels[8] = label8;
+            
 
         }
-
+      
         private void Start_Click(object sender, EventArgs e)
         {
             N = Convert.ToInt32(textBox1.Text);
@@ -301,10 +292,14 @@ namespace NIR
             tmax = Convert.ToDouble(textBox4.Text);
             mult= Convert.ToInt32(textBox5.Text);
             chart1.Series.Clear();
-            dataGridView1.Rows.Clear();
-            dataGridView1.Columns.Clear();
+           
             graph1(N,sigma);
-            graph2();
+            if (N > 6) 
+            { 
+                graph2();
+                this.chart2.Enabled = true;
+             
+            }
             if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "")
             {
                 MessageBox.Show("нет данных\r\n введите данные и нажмите 'Старт'", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
@@ -315,9 +310,13 @@ namespace NIR
                 MessageBox.Show("Одно из значений некорректно\r\n введите корректное значение", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
-
+            
         }
-
+      
+        private void Enter(object sender, KeyEventArgs e)
+        {
+            Start_Click(sender, e);
+        }
         private void выйтиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult dialogResult = MessageBox.Show("вы уверены ?", "Метод курамото", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -423,6 +422,7 @@ namespace NIR
             labels[5].Text = "Звезда";
         }
 
+       
         private void button1_Click(object sender, EventArgs e)
         {
            
