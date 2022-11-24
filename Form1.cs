@@ -167,8 +167,7 @@ namespace NIR
                         {
                             dif = (O[j] - O[i]);
 
-                            sum += A[i,j] * sigma * Math.Sin(dif) ;
-
+                            sum += A[i,j] * sigma * Math.Sin(dif);
                         }
 
                     }
