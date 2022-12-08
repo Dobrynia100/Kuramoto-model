@@ -439,6 +439,7 @@ namespace NIR
             // 
             // chart3
             // 
+            chartArea3.AxisX.Interval = 200D;
             chartArea3.AxisX.Maximum = 2000D;
             chartArea3.Name = "ChartArea1";
             this.chart3.ChartAreas.Add(chartArea3);
@@ -446,10 +447,12 @@ namespace NIR
             this.chart3.Legends.Add(legend3);
             this.chart3.Location = new System.Drawing.Point(3, 327);
             this.chart3.Name = "chart3";
+            series4.BorderWidth = 2;
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series4.Color = System.Drawing.Color.Blue;
             series4.Legend = "Legend1";
-            series4.Name = "Series1";
+            series4.Name = "Rho";
             this.chart3.Series.Add(series4);
             this.chart3.Size = new System.Drawing.Size(950, 181);
             this.chart3.TabIndex = 1;

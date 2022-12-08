@@ -14,9 +14,9 @@ namespace NIR
 {
     public partial class Form1 : Form
     {
-        double sigma = 0.01;
+        double sigma = 5;
         double dt = 0.01;
-        int N=4;
+        int N=10;
         double tmax = 2000;
         int K=1;
         bool downl = false;
@@ -96,6 +96,7 @@ namespace NIR
                     w[i]= Convert.ToDouble(w1.Split(' ')[i]);
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
+                graph3(N, O, t);
             }
             if (type == 1)
             {
@@ -177,13 +178,13 @@ namespace NIR
                 {
                     O[i] = y[i];
                  }
+                graph3(N, O,t);
 
-           
                 t += dt;
                 t1++;
 
             }
-            graph3(N, y);
+            
         }
         void graph2()
         {
@@ -233,29 +234,31 @@ namespace NIR
             }
 
         }
-        void graph3(int N, double[] y)
+        void graph3(int N, double[] O,double t)
         {
             double sum_cos = 0;
             double sum_sin = 0;
-            double t = 0;
+            
             double dt =Convert.ToDouble(textBoxes[2].Text);
-            int iterations = (int)((tmax - 0) / dt);
-            double[] rho = new double[iterations];
-           
-            for (int i = 0; i < tmax; i++)
-            {
-                t += dt;
-                for (int j = 0; j < N; j++)
+            //int iterations = (int)((tmax - 0) / dt);
+            //double[] rho =new double[];
+            double rho = 0;
+
+
+                for (int j = 0; j < N/2; j++)
                 {
-                    sum_cos += Math.Cos(y[j]);
-                    sum_sin += Math.Sin(y[j]);
+                    sum_cos += Math.Cos(O[N / 2 + j]);
+                    sum_sin += Math.Sin(O[N / 2 + j]);
 
                 }
-               sum_cos /= (N / 2);
+                sum_cos /= (N / 2);
                 sum_sin /= (N / 2);
-                rho[i] = Math.Sqrt(Math.Pow(sum_cos, 2) + Math.Pow(sum_sin, 2));
-                this.chart3.Series[0].Points.AddXY(t*tmax, rho[i]);
-            }
+                rho = Math.Sqrt(Math.Pow(sum_cos, 2) + Math.Pow(sum_sin, 2));
+              this.chart3.Series[0].Points.AddXY(t*tmax, rho);
+              //  this.chart3.Series[0].Points.AddY(rho);
+
+
+
         }
             static int num1 = 5,num2=9;
         TextBox[] textBoxes = new TextBox[num1];
@@ -297,7 +300,8 @@ namespace NIR
             tmax = Convert.ToDouble(textBox4.Text);
             K= Convert.ToInt32(textBox5.Text);
             chart1.Series.Clear();
-           
+            this.chart3.Series[0].Points.Clear();
+            this.chart3.Series[0].Points.AddY(0);
             graph1(N,sigma);
             
                 graph2();
@@ -422,7 +426,7 @@ namespace NIR
             type = 2;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
-
+            
             labels[5].Text = "Кольцо";
         }
 
@@ -432,13 +436,14 @@ namespace NIR
            
             for (int i = 0; i <= 8; i++)
             {
-                if (i < 5) textBoxes[i].Visible = true;
+                if (i < 4) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
             type = 1;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
-          
+            textBoxes[4].Visible = false;
+            labels[6].Visible = false;
             labels[5].Text = "Все со всеми";
             
         }
