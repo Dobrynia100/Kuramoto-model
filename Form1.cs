@@ -18,7 +18,7 @@ namespace NIR
         double dt = 0.01;
         int N=4;
         double tmax = 2000;
-        int mult=1;
+        int K=1;
         bool downl = false;
         Random rnd = new Random();
         int type = 1;
@@ -50,10 +50,8 @@ namespace NIR
         void graph1(int N,double sigma)
         {
             double t=0,Oj,sum=0;
-            
-            //int max = 5;
+            int K1 = K;
             double[] O = new double[N];
-           // double[] Oi = new double[N + 1];
             double[] w = new double[N + 1];
             double[] y = new double[N];
             double[,] A = new double[N,N];
@@ -75,8 +73,6 @@ namespace NIR
                 w = getw(N);
                 for (int i = 0; i < N; i++)
                 {
-                   
-                    // richTextBox1.Text +=  Convert.ToString(Oi[i]) + " - o";
                     y[i] = O[i];
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
@@ -119,41 +115,36 @@ namespace NIR
             }
             if(type==2)
             {
-               
-                
-                    for (int i = 1; i < N; i++)
+
+                while (K1 > 0)
                 {
-                   
-                    for (int j = 1; j < N; j++)
+                    for (int i = 1; i < N; i++)
                     {
-                        if (j==i+1 ||j==i-1)
+
+                        for (int j = 1; j < N; j++)
                         {
-                            A[i, j] = 1;
+                            if (j == i + K || j == i - K)
+                            {
+                                A[i, j] = 1;
+
+                            }
+                            else A[i, j] = 0;
 
                         }
-                        else A[i, j] = 0;
-
                     }
-                }
-                A[1, N - 1] = 1;
-                A[N - 1, 1] = 1;
+                    K1--;
+                    A[1, N - K1 - 1] = 1;
+                    A[N - K1 - 1, 1] = 1;
+                }  
+             
               
-                for (int i = 0; i < N; i++)
-                {
-                    A[0, i] = 1;
-                    A[i, 0] = 1;
-                }
-                A[0, 0] = 0;
+               
             }
             
       
             int t1 = 0;
             t = dt;
             double dif = 0;
-            //for (int i = 0; i < N; i++)
-            //{
-            //    O[i] = Oi[i];
-            //}
 
             while (t1 < tmax)
             {
@@ -189,11 +180,11 @@ namespace NIR
                  }
 
            
-                t += dt;//t+=1;
+                t += dt;
                 t1++;
 
             }
-           
+            graph3(N, y);
         }
         void graph2()
         {
@@ -220,39 +211,54 @@ namespace NIR
             }
             if (type == 2)
             {
-                for (int i = 0; i <= N; i++)
+                while (K > 0)
                 {
-                    for (int j = 1; j < N; j++)
+                    for (int i = 0; i <= N; i++)
                     {
-                        if (j == i + 1 || j == i - 1)
+                        for (int j = 1; j < N; j++)
                         {
-                            this.chart2.Series[1].Points.AddXY(i, j);
+
+                            if (j == i + K || j == i - K)
+                            {
+                                this.chart2.Series[1].Points.AddXY(i, j);
+                                
+                            }
+
                         }
                     }
+                    K--;
+                    this.chart2.Series[1].Points.AddXY(1, N-K);
+                    this.chart2.Series[1].Points.AddXY(N-K, 1);
                 }
-                this.chart2.Series[1].Points.AddXY(1, N-1);
-                this.chart2.Series[1].Points.AddXY(N-1, 1);          
+
             }
 
         }
-       
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        void graph3(int N, double[] y)
         {
-           // graph1();
-            textBox1.Text = Convert.ToString(trackBar1.Value);
-        }
-        private void trackBar2_ValueChanged(object sender, EventArgs e)
-        {
+            double sum_cos = 0;
+            double sum_sin = 0;
+            double t = 0;
+            double dt =Convert.ToDouble(textBoxes[2].Text);
+            int iterations = (int)((tmax - 0) / dt);
+            double[] rho = new double[iterations];
+           
+            for (int i = 0; i < tmax; i++)
+            {
+                t += dt;
+                for (int j = 0; j < N; j++)
+                {
+                    sum_cos += Math.Cos(y[j]);
+                    sum_sin += Math.Sin(y[j]);
 
-            graph2();
-           // textBox2.Text = Convert.ToString(trackBar2.Value);
+                }
+               sum_cos /= (N / 2);
+                sum_sin /= (N / 2);
+                rho[i] = Math.Sqrt(Math.Pow(sum_cos, 2) + Math.Pow(sum_sin, 2));
+                this.chart3.Series[0].Points.AddXY(t*tmax, rho[i]);
+            }
         }
-        private void trackBar3_ValueChanged(object sender, EventArgs e)
-        {
-     
-            graph1(N, sigma);
-        }
-        static int num1 = 5,num2=9;
+            static int num1 = 5,num2=9;
         TextBox[] textBoxes = new TextBox[num1];
         Label[] labels = new Label[num2];
         public Form1()
@@ -263,7 +269,7 @@ namespace NIR
             textBox2.Text = Convert.ToString(sigma);
             textBox3.Text = Convert.ToString(dt);
             textBox4.Text = Convert.ToString(tmax);
-            textBox5.Text = Convert.ToString(mult);
+            textBox5.Text = Convert.ToString(K);
             textBoxes[0] = textBox1;
             textBoxes[1] = textBox2;
             textBoxes[2] = textBox3;
@@ -290,22 +296,20 @@ namespace NIR
             sigma = Convert.ToDouble(textBox2.Text);
             dt=Convert.ToDouble(textBox3.Text);
             tmax = Convert.ToDouble(textBox4.Text);
-            mult= Convert.ToInt32(textBox5.Text);
+            K= Convert.ToInt32(textBox5.Text);
             chart1.Series.Clear();
            
             graph1(N,sigma);
-            if (N > 6) 
-            { 
+            
                 graph2();
                 this.chart2.Enabled = true;
-             
-            }
-            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "")
+                     
+            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "")
             {
                 MessageBox.Show("нет данных\r\n введите данные и нажмите 'Старт'", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
-            if (Convert.ToInt32(textBox1.Text) < 1 || Convert.ToDouble(textBox2.Text) <= 0 || Convert.ToDouble(textBox3.Text) <= 0)
+            if ((Convert.ToInt32(textBox1.Text) < 1) || (Convert.ToDouble(textBox2.Text) <= 0) || (Convert.ToDouble(textBox3.Text) <= 0) || (Convert.ToInt32(textBox5.Text)>N/2))
             {
                 MessageBox.Show("Одно из значений некорректно\r\n введите корректное значение", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
@@ -415,11 +419,12 @@ namespace NIR
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
+            labels[6].Text = "K=";
             type = 2;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
 
-            labels[5].Text = "Звезда";
+            labels[5].Text = "Кольцо";
         }
 
        
