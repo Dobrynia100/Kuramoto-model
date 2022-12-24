@@ -34,23 +34,105 @@ namespace NIR
             
             return Oi;
         }
-        double[] getw(int N)
+        double[] getw(int N,double max, double min)
         {
           
             double[] w = new double[N + 1];
             
                 for (int i = 0; i < N; i++)
                 {
-                    w[i] = rnd.NextDouble() * (10.5 - 9.5) + 9.5;
+                    w[i] = rnd.NextDouble() * (max - min) + min;
                 richTextBox3.Text += Convert.ToString(w[i])+" \n";
             }
             
             return w;
         }
+        double getrho(double[] O,bool G)
+        {
+            double sum_cos = 0;
+            double sum_sin = 0;
+
+            double dt = Convert.ToDouble(textBoxes[2].Text);
+            //int iterations = (int)((tmax - 0) / dt);
+            //double[] rho =new double[];
+            double rho = 0;
+
+
+            for (int j = 0; j < N / 2; j++)
+            {if (G)
+                {
+                    sum_cos += Math.Cos(O[j]);
+                    sum_sin += Math.Sin(O[j]);
+                }
+                else
+                {
+                    sum_cos += Math.Cos(O[N / 2 + j]);
+                    sum_sin += Math.Sin(O[N / 2 + j]);
+                }
+
+            }
+            sum_cos /= (N / 2);
+            sum_sin /= (N / 2);
+            rho = Math.Sqrt(Math.Pow(sum_cos, 2) + Math.Pow(sum_sin, 2));
+            return rho;
+        }
+        double[,] checkcon(int K,double[,]A)
+        {
+            int K1 = K;
+            if (type == 1)
+            {
+                for (int i = 0; i < N; i++)
+                {
+                    for (int j = 0; j < N; j++)
+                    {
+                        if (j != i)
+                        {
+                            A[i, j] = 1;
+
+                        }
+                        else A[i, j] = 0;
+
+                    }
+                }
+            }
+            if (type == 2)
+            {
+                while (K1 > 0)
+                {
+                  
+                
+                    for (int i = 1; i < N; i++)
+                    {
+
+                        for (int j = 1; j < N; j++)
+                        {
+                            if (checkBox1.Checked)
+                            { }
+                            else
+                            {
+                                if (j == i + K || j == i - K)
+                                {
+                                A[i, j] = 1;
+
+                                }
+                            else A[i, j] = 0;
+
+                            }
+                    }
+                    K1--;
+                    A[1, N - K1 - 1] = 1;
+                    A[N - K1 - 1, 1] = 1;
+                }
+
+            }
+
+            }
+            return A;
+        }
         void graph1(int N,double sigma)
         {
             double t=0,Oj,sum=0;
-            int K1 = K;
+            
             double[] O = new double[N];
             double[] w = new double[N + 1];
             double[] y = new double[N];
@@ -70,7 +152,7 @@ namespace NIR
             if (downl == false)
             {
                 O=getO(N);
-                w = getw(N);
+                w = getw(N,10.5,9.5);
                 for (int i = 0; i < N; i++)
                 {
                     y[i] = O[i];
@@ -96,51 +178,9 @@ namespace NIR
                     w[i]= Convert.ToDouble(w1.Split(' ')[i]);
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
-                graph3(N, O, t);
+                graph3(O,t);
             }
-            if (type == 1)
-            {
-                for (int i = 0; i < N; i++)
-                {
-                    for (int j = 0; j < N; j++)
-                    {
-                        if (j != i)
-                        {
-                            A[i, j] = 1;
-
-                        }
-                        else A[i, j] = 0;
-
-                    }
-                }
-            }
-            if(type==2)
-            {
-
-                while (K1 > 0)
-                {
-                    for (int i = 1; i < N; i++)
-                    {
-
-                        for (int j = 1; j < N; j++)
-                        {
-                            if (j == i + K || j == i - K)
-                            {
-                                A[i, j] = 1;
-
-                            }
-                            else A[i, j] = 0;
-
-                        }
-                    }
-                    K1--;
-                    A[1, N - K1 - 1] = 1;
-                    A[N - K1 - 1, 1] = 1;
-                }  
-             
-              
-               
-            }
+            A=checkcon(K, A);
             
       
             int t1 = 0;
@@ -178,7 +218,7 @@ namespace NIR
                 {
                     O[i] = y[i];
                  }
-                graph3(N, O,t);
+                graph3(O,t);
 
                 t += dt;
                 t1++;
@@ -234,32 +274,19 @@ namespace NIR
             }
 
         }
-        void graph3(int N, double[] O,double t)
+        void graph3(double[] O,double t)
         {
-            double sum_cos = 0;
-            double sum_sin = 0;
-            
-            double dt =Convert.ToDouble(textBoxes[2].Text);
-            //int iterations = (int)((tmax - 0) / dt);
-            //double[] rho =new double[];
-            double rho = 0;
-
-
-                for (int j = 0; j < N/2; j++)
-                {
-                    sum_cos += Math.Cos(O[N / 2 + j]);
-                    sum_sin += Math.Sin(O[N / 2 + j]);
-
-                }
-                sum_cos /= (N / 2);
-                sum_sin /= (N / 2);
-                rho = Math.Sqrt(Math.Pow(sum_cos, 2) + Math.Pow(sum_sin, 2));
+            double rho = getrho(O,false);
               this.chart3.Series[0].Points.AddXY(t*tmax, rho);
-              //  this.chart3.Series[0].Points.AddY(rho);
-
-
+            //  this.chart3.Series[0].Points.AddY(rho);
+            if (checkBox1.Checked)
+            {
+                double rhoG = getrho(O, true);
+                this.chart3.Series[1].Points.AddXY(t * tmax, rhoG);
+            }
 
         }
+      
             static int num1 = 5,num2=9;
         TextBox[] textBoxes = new TextBox[num1];
         Label[] labels = new Label[num2];
@@ -302,6 +329,7 @@ namespace NIR
             chart1.Series.Clear();
             this.chart3.Series[0].Points.Clear();
             this.chart3.Series[0].Points.AddY(0);
+
             graph1(N,sigma);
             
                 graph2();
@@ -417,6 +445,8 @@ namespace NIR
 
         private void button2_Click(object sender, EventArgs e)
         {
+            
+            checkBox1.Visible = true;
             for (int i = 0; i <= 8; i++)
             {
                 if (i < 5) textBoxes[i].Visible = true;
@@ -426,13 +456,28 @@ namespace NIR
             type = 2;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
-            
+            labels[1].Text = "Сигма=";
             labels[5].Text = "Кольцо";
         }
 
-       
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            
+            labels[1].Text = "СигмаN=";
+            Series mySeries = new Series("RhoG");
+            mySeries.ChartType = SeriesChartType.Line;
+            mySeries.BorderWidth = 2;
+            chart3.Series.Add(mySeries);
+            label10.Visible = true;
+            label11.Visible = true;
+            textBox6.Visible = true;
+            textBox7.Visible = true;
+            
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
+           
            
             for (int i = 0; i <= 8; i++)
             {
@@ -443,6 +488,7 @@ namespace NIR
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
             textBoxes[4].Visible = false;
+            labels[1].Text = "Сигма=";
             labels[6].Visible = false;
             labels[5].Text = "Все со всеми";
             
