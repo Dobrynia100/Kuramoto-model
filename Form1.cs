@@ -34,16 +34,15 @@ namespace NIR
             
             return Oi;
         }
-        double[] getw(int N,double max, double min)
+        double getw(int N,double max, double min)
         {
-          
-            double[] w = new double[N + 1];
+
+            double w;
             
-                for (int i = 0; i < N; i++)
-                {
-                    w[i] = rnd.NextDouble() * (max - min) + min;
-                richTextBox3.Text += Convert.ToString(w[i])+" \n";
-            }
+                
+                    w = rnd.NextDouble() * (max - min) + min;
+                richTextBox3.Text += Convert.ToString(w)+" \n";
+            
             
             return w;
         }
@@ -152,7 +151,24 @@ namespace NIR
             if (downl == false)
             {
                 O=getO(N);
-                w = getw(N,10.5,9.5);
+                if (checkBox1.Checked)
+                {
+                    for (int i = 0; i < N / 2; i++)
+                    {
+                        w[i] = getw(N / 2, 1.5, 0.5);
+                    }
+                    for (int i = N/2; i < N; i++)
+                    {
+                        w[i] = getw(N, 10.5, 9.5);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < N; i++)
+                    {
+                        w[i] = getw(N, 10.5, 9.5);
+                    }
+                }
                 for (int i = 0; i < N; i++)
                 {
                     y[i] = O[i];
@@ -198,8 +214,12 @@ namespace NIR
                         if (j != i)
                         {
                             dif = (O[j] - O[i]);
-
-                            sum += A[i,j] * sigma * Math.Sin(dif);
+                            if (checkBox1.Checked && ((i>=N/2) && (j>=N/2)))
+                            {
+                                sigma =Convert.ToDouble(textBox6.Text);
+                            }
+                                sum += A[i, j] * sigma * Math.Sin(dif);
+                            
                         }
 
                     }
@@ -473,6 +493,28 @@ namespace NIR
             textBox6.Visible = true;
             textBox7.Visible = true;
             
+        }
+
+        private void textBox6_Validating(object sender, CancelEventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                if ((Convert.ToInt32(textBox6.Text) < (N / 2 + 1) )||(Convert.ToInt32(textBox6.Text)>N))
+                {
+                    MessageBox.Show("СигмаG должна быть в интервале [N/2+1,N]", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+            }
+        }
+
+        private void textBox2_Validating(object sender, CancelEventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                if ((Convert.ToInt32(textBox2.Text) < (N / 2 + 1)) || (Convert.ToInt32(textBox2.Text) > N))
+                {
+                    MessageBox.Show("СигмаN должна быть в интервале [0,N/2]", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
