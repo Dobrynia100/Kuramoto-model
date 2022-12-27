@@ -107,63 +107,67 @@ namespace NIR
             }
             if (type == 2)
             {
-                do
+                if (checkBox1.Checked)
                 {
-
-
                     for (int i = 0; i < N; i++)
                     {
 
-                        for (int j =0; j < N; j++)
+                        for (int j = 0; j < N; j++)
                         {
-                            if (checkBox1.Checked)
+
+                            if ((j < N / 2 && i < N / 2) || (j >= N / 2 && i >= N / 2))
                             {
-                                if ((j < N / 2 && i < N / 2) || (j >= N / 2 && i >= N / 2))
+                                if (j != i)
                                 {
-                                    if (j != i)
-                                    {
-                                        A[i, j] = 1;
-
-                                    }
+                                    A[i, j] = 1;
 
                                 }
-                                if (j >= N / 2 && i < N / 2)
-                                {
 
-                                    A[i, i + N / 2] = 1;
-                                }
-
-                                if (j < N / 2 && i >= N / 2)
-                                {
-
-                                    A[i, i - N / 2] = 1;
-                                }
                             }
-                            else
+                            
+                        }
+
+                    }
+                    
+                    for (int i = 0; i < N / 2; i++)
+                    {
+
+                        A[i, i + N / 2] = 1;
+                        A[i + N / 2, i] = 1;
+                    }
+
+                  
+                }
+                else
+                {
+                    do
+                    {
+
+
+                        for (int i = 0; i < N; i++)
+                        {
+
+                            for (int j = 0; j < N; j++)
                             {
+
                                 if (j == i + K || j == i - K)
                                 {
                                     A[i, j] = 1;
 
                                 }
 
-
                             }
-                        }
-                       
-                    }                 
-                        K1--;
-                    if (checkBox1.Checked==false)
-                    {
-                         A[1, N - K1 - 1] = 1;
-                         A[N - K1 - 1, 1] = 1;                  
-                    }
-                    } while (K1 > 0);
 
+                        }
+                        K1--;
+                        A[1, N - K1 - 1] = 1;
+                        A[N - K1 - 1, 1] = 1;
+                    } while (K1 > 0);
+                }
             }
             return A;
         }
-        void graph1(int N,double sigma,double[,]A)
+        void graph1( int N,  double sigma,ref double[,]A)
         {
             double t=0,Oj,sum=0;
             
@@ -190,24 +194,24 @@ namespace NIR
                 {
                     for (int i = 0; i < N / 2; i++)
                     {
-                        w[i] = getw(N / 2, 1.5, 0.5);
+                        w[i] = getw(N / 2, 1.5, 0.5d);
                     }
                     for (int i = N/2; i < N; i++)
                     {
-                        w[i] = getw(N, 10.5, 9.5);
+                        w[i] = getw(N, 10.5d, 9.5d);
                     }
                 }
                 else
                 {
                     for (int i = 0; i < N; i++)
                     {
-                        w[i] = getw(N, 10.5, 9.5);
+                        w[i] = getw(N, 10.5d, 9.5d);
                     }
                 }
                 for (int i = 0; i < N; i++)
                 {
                     y[i] = O[i];
-                    this.chart1.Series[i].Points.AddXY(0, y[i]);
+                    this.chart1.Series[i].Points.AddXY(0d, y[i]);
                 }
 
                 //   textBox3.Text =Convert.ToString(O);
@@ -229,7 +233,7 @@ namespace NIR
                     w[i]= Convert.ToDouble(w1.Split(' ')[i]);
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                 }
-                graph3(O,t);
+                graph3(ref O,t);
             }
             
             
@@ -256,16 +260,18 @@ namespace NIR
                                     {
                                         sigma = Convert.ToDouble(textBox2.Text);
                                     }
-                                    else if ((j >= N / 2 && i < N / 2) || (j < N / 2 && i >= N / 2))
-                                    {
-                                        sigma = Convert.ToDouble(textBox7.Text);
-                                    }
+                                    
                                     else if ((j >= N / 2 && i >= N / 2))
                                     {
                                         sigma = Convert.ToDouble(textBox6.Text);
                                     }
+                                else //if ((j >= N / 2 && i < N / 2) || (j < N / 2 && i >= N / 2))
+                                {
+                                    sigma = Convert.ToDouble(textBox7.Text);
                                 }
+                            }
                                 else sigma = Convert.ToDouble(textBox2.Text);
+
                                 sum += A[i, j] * sigma * Math.Sin(dif);
 
                             }
@@ -287,7 +293,7 @@ namespace NIR
                 //{
                 //    O[i] = y[i];
                 // }
-                graph3(O,t);
+                graph3(ref O,t);
 
                 t += dt;
                 t1++;
@@ -295,7 +301,7 @@ namespace NIR
             }
             
         }
-        void graph2(double[,]A)
+        void graph2(ref double[,]A)
         {
             this.chart2.Visible = true;
             double x, y=0;
@@ -347,7 +353,7 @@ namespace NIR
             }
 
         }
-        void graph3(double[] O,double t)
+        void graph3(ref double[] O,double t)
         {
             double rho = getrho(O,false);
               this.chart3.Series[0].Points.AddXY(Math.Round(t*tmax,8), rho);
@@ -404,19 +410,18 @@ namespace NIR
             tmax = Convert.ToDouble(textBox4.Text);
             K= Convert.ToInt32(textBox5.Text);
             chart1.Series.Clear();
+            this.chart2.Enabled = true;
             double[,] A = new double[N, N];
             A = checkcon(K, A);
-            graph2(A);
+            graph2(ref A);
             for (int i = 0; i < this.chart3.Series.Count; i++)
             {
 
                 this.chart3.Series[i].Points.Clear();
                 this.chart3.Series[i].Points.AddY(0);
             }
-            graph1(N,sigma,A);
-            
-                
-                this.chart2.Enabled = true;
+            graph1(N, sigma,ref A);             
+               
                      
             if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "")
             {
