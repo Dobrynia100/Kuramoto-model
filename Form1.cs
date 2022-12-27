@@ -75,9 +75,20 @@ namespace NIR
             rho = Math.Sqrt(Math.Pow(sum_cos, 2) + Math.Pow(sum_sin, 2));
             return rho;
         }
+        void clearA(double[,] A)
+        {
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    A[i, j] = 0;
+                }
+            }
+         }
         double[,] checkcon(int K,double[,]A)
         {
             int K1 = K;
+            clearA(A);
             if (type == 1)
             {
                 for (int i = 0; i < N; i++)
@@ -89,53 +100,77 @@ namespace NIR
                             A[i, j] = 1;
 
                         }
-                        else A[i, j] = 0;
+                       
 
                     }
                 }
             }
             if (type == 2)
             {
-                while (K1 > 0)
+                do
                 {
-                  
-                
-                    for (int i = 1; i < N; i++)
+
+
+                    for (int i = 0; i < N; i++)
                     {
 
-                        for (int j = 1; j < N; j++)
+                        for (int j =0; j < N; j++)
                         {
                             if (checkBox1.Checked)
-                            { }
+                            {
+                                if ((j < N / 2 && i < N / 2) || (j >= N / 2 && i >= N / 2))
+                                {
+                                    if (j != i)
+                                    {
+                                        A[i, j] = 1;
+
+                                    }
+
+                                }
+                                if (j >= N / 2 && i < N / 2)
+                                {
+
+                                    A[i, i + N / 2] = 1;
+                                }
+
+                                if (j < N / 2 && i >= N / 2)
+                                {
+
+                                    A[i, i - N / 2] = 1;
+                                }
+                            }
                             else
                             {
                                 if (j == i + K || j == i - K)
                                 {
-                                A[i, j] = 1;
+                                    A[i, j] = 1;
 
                                 }
-                            else A[i, j] = 0;
+
 
                             }
+                        }
+                       
+                    }                 
+                        K1--;
+                    if (checkBox1.Checked==false)
+                    {
+                         A[1, N - K1 - 1] = 1;
+                         A[N - K1 - 1, 1] = 1;                  
                     }
-                    K1--;
-                    A[1, N - K1 - 1] = 1;
-                    A[N - K1 - 1, 1] = 1;
-                }
-
-            }
+                    } while (K1 > 0);
 
             }
             return A;
         }
-        void graph1(int N,double sigma)
+        void graph1(int N,double sigma,double[,]A)
         {
             double t=0,Oj,sum=0;
             
             double[] O = new double[N];
             double[] w = new double[N + 1];
             double[] y = new double[N];
-            double[,] A = new double[N,N];
+            
             for (int i = 0; i < N; i++)
             {
                 Series mySeries = new Series("O" + i);
@@ -196,7 +231,7 @@ namespace NIR
                 }
                 graph3(O,t);
             }
-            A=checkcon(K, A);
+            
             
       
             int t1 = 0;
@@ -209,20 +244,34 @@ namespace NIR
                 {
 
                     sum = 0;
-                    for (int j = 0; j < N; j++)
-                    {
-                        if (j != i)
+                    
+                        for (int j = 0; j < N; j++)
                         {
-                            dif = (O[j] - O[i]);
-                            if (checkBox1.Checked && ((i>=N/2) && (j>=N/2)))
+                            if ((j != i) || A[i, j] != 0)
                             {
-                                sigma =Convert.ToDouble(textBox6.Text);
-                            }
+                                dif = (O[j] - O[i]);
+                                if (checkBox1.Checked)
+                                {
+                                    if ((j < N / 2 && i < N / 2))
+                                    {
+                                        sigma = Convert.ToDouble(textBox2.Text);
+                                    }
+                                    else if ((j >= N / 2 && i < N / 2) || (j < N / 2 && i >= N / 2))
+                                    {
+                                        sigma = Convert.ToDouble(textBox7.Text);
+                                    }
+                                    else if ((j >= N / 2 && i >= N / 2))
+                                    {
+                                        sigma = Convert.ToDouble(textBox6.Text);
+                                    }
+                                }
+                                else sigma = Convert.ToDouble(textBox2.Text);
                                 sum += A[i, j] * sigma * Math.Sin(dif);
-                            
+
+                            }
                         }
 
-                    }
+                    
                  /*   if (test < 4 && t <= 0.03)
                     {
                         //  richTextBox1.Text += " Oj= " + Oi[j] + " Oi= " + Oi[i] + " dif- " + dif + " sin-" + Math.Sin(dif) + " - ";
@@ -231,13 +280,13 @@ namespace NIR
                         richTextBox1.Text += '\n';
                     }*/
                     y[i] = O[i] + (w[i] + sum)*dt;
-                   
+                    O[i] = y[i];
                     this.chart1.Series[i].Points.AddXY(t*tmax, O[i]);
                 }
-                for (int i = 0; i < N; i++)
-                {
-                    O[i] = y[i];
-                 }
+                //for (int i = 0; i < N; i++)
+                //{
+                //    O[i] = y[i];
+                // }
                 graph3(O,t);
 
                 t += dt;
@@ -246,7 +295,7 @@ namespace NIR
             }
             
         }
-        void graph2()
+        void graph2(double[,]A)
         {
             this.chart2.Visible = true;
             double x, y=0;
@@ -255,7 +304,7 @@ namespace NIR
             {
                 this.chart2.Series[i].Points.Clear();
             }
-            this.chart2.Series[1].Points.Clear();
+           // this.chart2.Series[1].Points.Clear();
           
             this.chart2.Series[1].Name=Convert.ToString(sigma);
             
@@ -271,25 +320,29 @@ namespace NIR
             }
             if (type == 2)
             {
+                
                 while (K > 0)
                 {
-                    for (int i = 0; i <= N; i++)
+                    for (int i = 1; i <= N; i++)
                     {
-                        for (int j = 1; j < N; j++)
+                        for (int j = 1; j <= N; j++)
                         {
 
-                            if (j == i + K || j == i - K)
+                            if (A[i-1,j-1]==1)
                             {
                                 this.chart2.Series[1].Points.AddXY(i, j);
                                 
                             }
 
                         }
+                    }                
+                        K--;
+                    if (checkBox1.Checked==false)
+                    {
+                        this.chart2.Series[1].Points.AddXY(1, N - K);
+                        this.chart2.Series[1].Points.AddXY(N - K, 1);
                     }
-                    K--;
-                    this.chart2.Series[1].Points.AddXY(1, N-K);
-                    this.chart2.Series[1].Points.AddXY(N-K, 1);
-                }
+                 }
 
             }
 
@@ -297,17 +350,18 @@ namespace NIR
         void graph3(double[] O,double t)
         {
             double rho = getrho(O,false);
-              this.chart3.Series[0].Points.AddXY(t*tmax, rho);
+              this.chart3.Series[0].Points.AddXY(Math.Round(t*tmax,8), rho);
+            
             //  this.chart3.Series[0].Points.AddY(rho);
             if (checkBox1.Checked)
             {
                 double rhoG = getrho(O, true);
-                this.chart3.Series[1].Points.AddXY(t * tmax, rhoG);
+                this.chart3.Series[1].Points.AddXY(Math.Round(t * tmax, 8), rhoG);
             }
 
         }
       
-            static int num1 = 5,num2=9;
+            static int num1 = 7,num2=9;
         TextBox[] textBoxes = new TextBox[num1];
         Label[] labels = new Label[num2];
         public Form1()
@@ -324,6 +378,9 @@ namespace NIR
             textBoxes[2] = textBox3;
             textBoxes[3] = textBox4;
             textBoxes[4] = textBox5;
+            textBoxes[5] = textBox6;
+            textBoxes[6] = textBox7;
+
 
 
             labels[0] = label3;
@@ -347,12 +404,18 @@ namespace NIR
             tmax = Convert.ToDouble(textBox4.Text);
             K= Convert.ToInt32(textBox5.Text);
             chart1.Series.Clear();
-            this.chart3.Series[0].Points.Clear();
-            this.chart3.Series[0].Points.AddY(0);
+            double[,] A = new double[N, N];
+            A = checkcon(K, A);
+            graph2(A);
+            for (int i = 0; i < this.chart3.Series.Count; i++)
+            {
 
-            graph1(N,sigma);
+                this.chart3.Series[i].Points.Clear();
+                this.chart3.Series[i].Points.AddY(0);
+            }
+            graph1(N,sigma,A);
             
-                graph2();
+                
                 this.chart2.Enabled = true;
                      
             if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "")
@@ -483,20 +546,54 @@ namespace NIR
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             
-            labels[1].Text = "СигмаN=";
-            Series mySeries = new Series("RhoG");
-            mySeries.ChartType = SeriesChartType.Line;
-            mySeries.BorderWidth = 2;
-            chart3.Series.Add(mySeries);
-            label10.Visible = true;
-            label11.Visible = true;
-            textBox6.Visible = true;
-            textBox7.Visible = true;
             
+            
+            if (checkBox1.Checked)
+            {
+                labels[1].Text = "СигмаN=";
+                Series mySeries = new Series("RhoG");
+                mySeries.ChartType = SeriesChartType.Line;
+                mySeries.BorderWidth = 2;
+                chart3.Series.Add(mySeries);
+                label10.Visible = true;
+                label11.Visible = true;
+                textBoxes[4].Visible = false;
+                textBoxes[5].Visible = true;
+                textBoxes[6].Visible = true;
+                labels[6].Visible = false;
+
+            }
+            else
+            {
+                labels[1].Text = "Сигма=";
+                chart3.Series.RemoveAt(1);
+                label10.Visible = false;
+                label11.Visible = false;
+                textBoxes[4].Visible = true;
+                textBoxes[5].Visible = false;
+                textBoxes[6].Visible = false;
+                labels[6].Visible = true;
+            }
+
+
         }
 
         private void textBox6_Validating(object sender, CancelEventArgs e)
         {
+            try
+            {
+                int numericValue;
+                bool isNumber = int.TryParse(textBox2.Text, out numericValue);
+
+                if (isNumber == false)
+                {
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "СигмаG", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    e.Cancel = true;
+                }
+
+
+            }
+            catch (Exception ex) { }
             if (checkBox1.Checked)
             {
                 if ((Convert.ToInt32(textBox6.Text) < (N / 2 + 1) )||(Convert.ToInt32(textBox6.Text)>N))
@@ -508,13 +605,102 @@ namespace NIR
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
         {
+
+
+            try
+            {
+                int numericValue;
+                bool isNumber = int.TryParse(textBox2.Text, out numericValue);
+
+                if (isNumber == false)
+                {
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "Сигма", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    e.Cancel = true;
+                }
+
+
+            }
+            catch (Exception ex) { }
+            
             if (checkBox1.Checked)
             {
-                if ((Convert.ToInt32(textBox2.Text) < (N / 2 + 1)) || (Convert.ToInt32(textBox2.Text) > N))
+                if (!(Convert.ToInt32(textBox2.Text) < (N / 2)) || !(Convert.ToInt32(textBox2.Text) > 0))
                 {
                     MessageBox.Show("СигмаN должна быть в интервале [0,N/2]", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
             }
+        }
+
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int numericValue;
+                bool isNumber = int.TryParse(textBox1.Text, out numericValue);
+
+                if (isNumber == false)
+                {
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "N", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    e.Cancel = true;
+                }
+
+
+            }
+            catch (Exception ex) { }
+        }
+
+        private void textBox4_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int numericValue;
+                bool isNumber = int.TryParse(textBox4.Text, out numericValue);
+
+                if (isNumber == false)
+                {
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "tmax", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    e.Cancel = true;
+                }
+
+
+            }
+            catch (Exception ex) { }
+        }
+
+        private void textBox3_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                double numericValue;
+                bool isNumber = double.TryParse(textBox3.Text, out numericValue);
+
+                if (isNumber == false)
+                {
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "dt", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    e.Cancel = true;
+                }
+
+
+            }
+            catch (Exception ex) { }
+        }
+
+        private void textBox5_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int numericValue;
+                bool isNumber = int.TryParse(textBox5.Text, out numericValue);
+
+                if (isNumber == false)
+                {
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "K", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    e.Cancel = true;
+                }
+
+
+            }
+            catch (Exception ex) { }
         }
 
         private void button1_Click(object sender, EventArgs e)
