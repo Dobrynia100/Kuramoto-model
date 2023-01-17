@@ -14,7 +14,7 @@ namespace NIR
 {
     public partial class Form1 : Form
     {
-        double sigma = 5;
+        double sigma = 5, sigma2 = 9;
         double dt = 0.01;
         int N=10;
         double tmax = 2000;
@@ -119,36 +119,26 @@ namespace NIR
             {
                 if (checkBox1.Checked)
                 {
-                    while (i < N)
+                    while (i < N/2)
                     {
-
-                        while (j < N)
-                        {
-
-                            if ((j < N / 2 && i < N / 2) || (j >= N / 2 && i >= N / 2))
-                            {
+                        A[i, i + N / 2] = 1;
+                        A[i + N / 2, i] = 1;
+                        while (j < N/2)
+                        {                       
                                 if (j != i)
                                 {
                                     A[i, j] = 1;
-
-                                }
-
-                            }
+                                    A[i + N / 2, j+N/2] = 1;
+                                }                            
                             j++;
                         }
                         j = 0;
                         i++;
                     }
                     i = 0;
-                    while (i < N/2)
-                    {
+                    
 
-                        A[i, i + N / 2] = 1;
-                        A[i + N / 2, i] = 1;
-                        i++;
-                    }
 
-                  
                 }
                 else
                 {
@@ -188,6 +178,13 @@ namespace NIR
             
             return A;
         }
+        double sums(double[]O,int i,int j,double sigma)
+        {
+            double dif = 0;
+            dif = (O[j] - O[i]);
+            return sigma * Math.Sin(dif);
+        }
+        
         void graph1( int N,  double sigma,ref double[,]A)
         {
             double t=0,Oj,sum=0;
@@ -195,7 +192,8 @@ namespace NIR
             double[] O = new double[N];
             double[] w = new double[N + 1];
             double[] y = new double[N];
-
+            double[] sum1 = new double[N/2+1];
+            double[] sum2 = new double[N/2+1];
             while (i < N)
             {
                 Series mySeries = new Series("O" + i);
@@ -212,6 +210,17 @@ namespace NIR
             if (downl == false)
             {
                 O=getO(N);
+                //O[0] = 1.19746912786187;
+                //O[1] = 5.37222573018109;
+                //O[2] = 4.15683965357519;
+                //O[3] = 3.393337227559;
+                //O[4] = 2.76237955956287;
+                //O[5] = 3.40766243446232;
+                //O[6] = 1.9237057492475;
+                //O[7] = 2.66084160479506;
+                //O[8] = 2.47588373672276;
+                //O[9] = 1.8025766354716;
+
                 if (checkBox1.Checked)
                 {
                     while (i < N)
@@ -245,11 +254,18 @@ namespace NIR
                 i = 0;
 
                 //   textBox3.Text =Convert.ToString(O);
-                //w[0] = 9.91044653645272;
-                //w[1] = 9.73098717687232;
-                //w[2] = 10.3641021851749;
-                //w[3] = 9.86498762730741;
-               
+                //w[0] = 1.34370677305558;
+                //w[1] = 1.21084567937574;
+                //w[2] = 1.09845071127566;
+                //w[3] = 0.653441705346779;
+                //w[4] = 0.864471862262335;
+                //w[5] = 9.53867130169583;
+                //w[6] = 10.1679832230639;
+                //w[7] = 10.0354543074665;
+                //w[8] = 10.1036970664764;
+                //w[9] = 10.1581068163077;
+
+
             }
             else
             {
@@ -272,71 +288,162 @@ namespace NIR
       
             
             t = dt;
-            double dif = 0;
 
-            while (t1 < tmax)
+            double dif = 0, dif2 = 0;
+            if (checkBox1.Checked)
             {
-                while (i < N)
+                while (t1 < tmax)
                 {
-                   
-                    sum = 0;
 
-                    while (j < N)
+                    sigma = Convert.ToDouble(textBox2.Text);
+                    sigma2 = Convert.ToDouble(textBox6.Text);
+                    while (i < N / 2)
                     {
+                        while (j < N/2)
+                        {
                             if ((j != i) || A[i, j] != 0)
                             {
-                                dif = (O[j] - O[i]);
-                                if (checkBox1.Checked)
-                                {
-                                    if ((j < N / 2 && i < N / 2))
-                                    {
-                                        sigma = Convert.ToDouble(textBox2.Text);
-                                    }
-                                    
-                                    else if ((j >= N / 2 && i >= N / 2))
-                                    {
-                                        sigma = Convert.ToDouble(textBox6.Text);
-                                    }
-                                    else //if ((j >= N / 2 && i < N / 2) || (j < N / 2 && i >= N / 2))
-                                    {
-                                    sigma = Convert.ToDouble(textBox7.Text);
-                                    }
-                                }
-                                else sigma = Convert.ToDouble(textBox2.Text);
 
-                                sum += A[i, j] * sigma * Math.Sin(dif);
+                                sum1[i] += A[i, j] * sums(O, i, j, sigma);                              
+                                sum2[i] += A[i + N / 2, j + N / 2] * sums(O, i+N/2, j+N/2, sigma2);
 
                             }
-                        j++;
+                            else
+                            {
+                                sum1[i] += 0;
+                                sum2[i] += 0;
+                            }
+                            j++;
+                        }
+                        j = 0;
+                        i++;
                     }
                     j = 0;
+                    sigma = Convert.ToDouble(textBox7.Text);
+                    while (i < N)
+                    {
+                        while (j < N / 2)
+                        {
+                            if ((j != i) || A[i, j] != 0)
+                            {
+                              //  dif = (O[i] - O[j]);
+                                sum1[i - N / 2] += A[i, j] * sums(O, j, i, sigma);
+                               // dif2 = (O[j] - O[i]);
+
+                                sum2[i - N / 2] += A[j, i] * sums(O, i, j, sigma);
+
+                            }
+                            else
+                            {
+                                sum1[i - N / 2] += 0;
+                                sum2[i - N / 2] += 0;
+                            }
+
+
+                            j++;
+                        }
+                        y[i - N / 2] = O[i - N / 2] + (w[i - N / 2] + sum1[i - N / 2]) * dt;
+                        O[i - N / 2] = y[i - N / 2];
+                        this.chart1.Series[i - N / 2].Points.AddXY(t * tmax, O[i - N / 2]);
+
+                        y[i] = O[i] + (w[i] + sum2[i - N / 2]) * dt;
+                        O[i] = y[i];
+                        this.chart1.Series[i].Points.AddXY(t * tmax, O[i]);
+
+
+                        j = 0;
+                        i++;
+                    }
+                    i = 0;
+                    j = 0;
+
+                    //while (i < N)
+                    //{
+
+                    //    sum = 0;
+
+                    //    while (j < N)
+                    //    {
+                    //        if ((j != i) || A[i, j] != 0)
+                    //        {
+                    //            dif = (O[j] - O[i]);
+
+                    //            if ((j < N / 2 && i < N / 2))
+                    //            {
+                    //                sigma = Convert.ToDouble(textBox2.Text);
+                    //            }
+
+                    //            else if ((j >= N / 2 && i >= N / 2))
+                    //            {
+                    //                sigma = Convert.ToDouble(textBox6.Text);
+                    //            }
+                    //            else //if ((j >= N / 2 && i < N / 2) || (j < N / 2 && i >= N / 2))
+                    //            {
+                    //                sigma = Convert.ToDouble(textBox7.Text);
+                    //            }
+
+                    //            sum += A[i, j] * sigma * Math.Sin(dif);
+
+                    //        }
+                    //        j++;
+                    //    }
+                    //    j = 0;
 
                     /*   if (test < 4 && t <= 0.03)
                        {
-                           //  richTextBox1.Text += " Oj= " + Oi[j] + " Oi= " + Oi[i] + " dif- " + dif + " sin-" + Math.Sin(dif) + " - ";
+                             richTextBox1.Text += " Oj= " + Oi[j] + " Oi= " + Oi[i] + " dif- " + dif + " sin-" + Math.Sin(dif) + " - ";
                            richTextBox1.Text += i + " sum= " + sum;
                            test++;
                            richTextBox1.Text += '\n';
                        }*/
-                    y[i] = O[i] + (w[i] + sum)*dt;
-                    O[i] = y[i];                  
-                    this.chart1.Series[i].Points.AddXY(t*tmax, O[i]);
-                    i++;
-                }
-                i = 0;
-                
-                //for (int i = 0; i < N; i++)
-                //{
+                //    y[i] = O[i] + (w[i] + sum) * dt;
                 //    O[i] = y[i];
-                // }
-                graph3(ref O,t);
+                //    this.chart1.Series[i].Points.AddXY(t * tmax, O[i]);
+                //    i++;
+                //}
+                //i = 0;
 
-                t += dt;
-                t1++;
 
+                graph3(ref O, t);
+
+                    t += dt;
+                    t1++;
+
+                }
             }
-            
-        }
+            else
+            {
+                
+                sigma = Convert.ToDouble(textBox2.Text);
+                while (t1 < tmax)
+                {
+                    while (i < N)
+                    {
+                        sum = 0;
+                        while (j < N)
+                        {
+                            if ((j != i) || A[i, j] != 0)
+                            {
+                                dif = (O[j] - O[i]);
+                                sum += A[i, j] * sigma * Math.Sin(dif);
+
+                            }
+                            j++;
+                        }
+                        j = 0;
+
+                        O[i] = O[i] + (w[i] + sum) * dt;
+                        this.chart1.Series[i].Points.AddXY(t * tmax, O[i]);
+                        i++;
+                    }
+                    i = 0;
+                    graph3(ref O, t);
+                    t += dt;
+                    t1++;
+
+                }
+            }
+            }
         void graph2(ref double[,]A)
         {
             this.chart2.Visible = true;
@@ -398,7 +505,7 @@ namespace NIR
 
         }
       
-            static int num1 = 7,num2=9;
+            static int num1 = 8,num2=11;
         TextBox[] textBoxes = new TextBox[num1];
         Label[] labels = new Label[num2];
         public Form1()
@@ -417,7 +524,7 @@ namespace NIR
             textBoxes[4] = textBox5;
             textBoxes[5] = textBox6;
             textBoxes[6] = textBox7;
-
+            textBoxes[7] = textBox8;
 
 
             labels[0] = label3;
@@ -429,7 +536,9 @@ namespace NIR
             labels[6] = label6;
             labels[7] = label7;
             labels[8] = label8;
-            
+            labels[9] = label10;
+            labels[10] = label11;
+
 
         }
       
@@ -564,7 +673,11 @@ namespace NIR
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            for (int i = 0; i < 8; i++)
+            {
+                textBoxes[i].Visible = false;
+
+            }
             checkBox1.Visible = true;
             for (int i = 0; i <= 8; i++)
             {
@@ -741,8 +854,12 @@ namespace NIR
 
         private void button1_Click(object sender, EventArgs e)
         {
-           
-           
+            checkBox1.Visible = false;
+            for (int i = 0; i < 8; i++)
+            {
+               textBoxes[i].Visible = false;
+                
+            }
             for (int i = 0; i <= 8; i++)
             {
                 if (i < 4) textBoxes[i].Visible = true;
