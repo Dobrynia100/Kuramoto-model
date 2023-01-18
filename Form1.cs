@@ -16,9 +16,9 @@ namespace NIR
     {
         double sigma = 5, sigma2 = 9;
         double dt = 0.01;
-        int N=10;
+        int N = 10;
         double tmax = 2000;
-        int K=1;
+        int K = 1;
         bool downl = false;
         Random rnd = new Random();
         int type = 1;
@@ -28,26 +28,26 @@ namespace NIR
             double[] Oi = new double[N + 1];
             while (i < N)
             {
-                    Oi[i] = rnd.NextDouble() * (2 * Math.PI);
-                richTextBox2.Text += Convert.ToString(Oi[i])+" \n";
+                Oi[i] = rnd.NextDouble() * (2 * Math.PI);
+                richTextBox2.Text += Convert.ToString(Oi[i]) + " \n";
                 i++;
             }
-            
+
             return Oi;
         }
-        double getw(int N,double max, double min)
+        double getw(int N, double max, double min)
         {
 
             double w;
-            
-                
-                    w = rnd.NextDouble() * (max - min) + min;
-                richTextBox3.Text += Convert.ToString(w)+" \n";
-            
-            
+
+
+            w = rnd.NextDouble() * (max - min) + min;
+            richTextBox3.Text += Convert.ToString(w) + " \n";
+
+
             return w;
         }
-        double getrho(double[] O,bool G)
+        double getrho(double[] O, bool G)
         {
             double sum_cos = 0;
             double sum_sin = 0;
@@ -58,7 +58,7 @@ namespace NIR
             double rho = 0;
             int j = 0;
 
-            while (j < N/2)
+            while (j < N / 2)
             {
                 if (G)
                 {
@@ -90,10 +90,10 @@ namespace NIR
                 j = 0;
                 i++;
             }
-         }
-        double[,] checkcon(int K,double[,]A)
+        }
+        double[,] checkcon(int K, double[,] A)
         {
-           
+
             int i = 0, j = 0;
             clearA(A);
             if (type == 1)
@@ -119,66 +119,66 @@ namespace NIR
             {
                 if (checkBox1.Checked)
                 {
-                    while (i < N/2)
+                    while (i < N / 2)
                     {
                         A[i, i + N / 2] = 1;
                         A[i + N / 2, i] = 1;
-                        while (j < N/2)
-                        {                       
-                                if (j != i)
-                                {
-                                    A[i, j] = 1;
-                                    A[i + N / 2, j+N/2] = 1;
-                                }                            
+                        while (j < N / 2)
+                        {
+                            if (j != i)
+                            {
+                                A[i, j] = 1;
+                                A[i + N / 2, j + N / 2] = 1;
+                            }
                             j++;
                         }
                         j = 0;
                         i++;
                     }
                     i = 0;
-                    
+
 
 
                 }
                 else
                 {
-                   
 
 
-                        while (i < N)
+
+                    while (i < N)
+                    {
+
+                        while (j < N)
                         {
 
-                            while (j < N)
+                            if (j == i + K || j == i - K)
                             {
-
-                                if (j == i + K || j == i - K)
-                                {
-                                    A[i, j] = 1;
-
-                                }
-                                if (i - K < 0)
-                                {
-                                    int x = i - K;
-                                    A[i, N+x] = 1;
-                                    A[N+x,i ] = 1;
-                                }
-                                j++;
+                                A[i, j] = 1;
 
                             }
-                            
-                            j = 0;
-                            i++;
+                            if (i - K < 0)
+                            {
+                                int x = i - K;
+                                A[i, N + x] = 1;
+                                A[N + x, i] = 1;
+                            }
+                            j++;
+
                         }
-                      
+
+                        j = 0;
+                        i++;
+                    }
+
                     i = 0;
                     j = 0;
-                   
-                 }
+
+                }
             }
-            
+
             return A;
         }
-        double sums(double[]O,int i,int j,double sigma)
+       static double sums(ref double[] O, int i, int j, ref double sigma)
         {
             double dif = 0;
             dif = (O[j] - O[i]);
@@ -192,8 +192,14 @@ namespace NIR
             double[] O = new double[N];
             double[] w = new double[N + 1];
             double[] y = new double[N];
-            double[] sum1 = new double[N/2+1];
-            double[] sum2 = new double[N/2+1];
+            double[] sum1 = new double[N/2];
+            double[] sum2 = new double[N/2];
+            while (i < N / 2)
+            { sum1[i] = 0;
+                sum2[i] = 0;
+                i++;
+            }
+            i = 0;
             while (i < N)
             {
                 Series mySeries = new Series("O" + i);
@@ -288,7 +294,7 @@ namespace NIR
       
             
             t = dt;
-
+            
             double dif = 0, dif2 = 0;
             if (checkBox1.Checked)
             {
@@ -298,14 +304,15 @@ namespace NIR
                     sigma = Convert.ToDouble(textBox2.Text);
                     sigma2 = Convert.ToDouble(textBox6.Text);
                     while (i < N / 2)
-                    {
-                        while (j < N/2)
+                    { 
+                        
+                        while (j < N / 2)
                         {
                             if ((j != i) || A[i, j] != 0)
                             {
 
-                                sum1[i] += A[i, j] * sums(O, i, j, sigma);                              
-                                sum2[i] += A[i + N / 2, j + N / 2] * sums(O, i+N/2, j+N/2, sigma2);
+                                sum1[i] += A[i, j] * sums(ref O, i, j, ref sigma);
+                                sum2[i] += A[i + N / 2, j + N / 2] * sums(ref O, i + N / 2, j + N / 2, ref sigma2);
 
                             }
                             else
@@ -322,15 +329,16 @@ namespace NIR
                     sigma = Convert.ToDouble(textBox7.Text);
                     while (i < N)
                     {
+
                         while (j < N / 2)
                         {
                             if ((j != i) || A[i, j] != 0)
                             {
-                              //  dif = (O[i] - O[j]);
-                                sum1[i - N / 2] += A[i, j] * sums(O, j, i, sigma);
-                               // dif2 = (O[j] - O[i]);
+                                //  dif = (O[i] - O[j]);
+                                sum1[i - N / 2] += A[i, j] * sums(ref O, j, i, ref sigma);
+                                // dif2 = (O[j] - O[i]);
 
-                                sum2[i - N / 2] += A[j, i] * sums(O, i, j, sigma);
+                                sum2[i - N / 2] += A[j, i] * sums(ref O, i, j, ref sigma2);
 
                             }
                             else
@@ -357,53 +365,7 @@ namespace NIR
                     i = 0;
                     j = 0;
 
-                    //while (i < N)
-                    //{
-
-                    //    sum = 0;
-
-                    //    while (j < N)
-                    //    {
-                    //        if ((j != i) || A[i, j] != 0)
-                    //        {
-                    //            dif = (O[j] - O[i]);
-
-                    //            if ((j < N / 2 && i < N / 2))
-                    //            {
-                    //                sigma = Convert.ToDouble(textBox2.Text);
-                    //            }
-
-                    //            else if ((j >= N / 2 && i >= N / 2))
-                    //            {
-                    //                sigma = Convert.ToDouble(textBox6.Text);
-                    //            }
-                    //            else //if ((j >= N / 2 && i < N / 2) || (j < N / 2 && i >= N / 2))
-                    //            {
-                    //                sigma = Convert.ToDouble(textBox7.Text);
-                    //            }
-
-                    //            sum += A[i, j] * sigma * Math.Sin(dif);
-
-                    //        }
-                    //        j++;
-                    //    }
-                    //    j = 0;
-
-                    /*   if (test < 4 && t <= 0.03)
-                       {
-                             richTextBox1.Text += " Oj= " + Oi[j] + " Oi= " + Oi[i] + " dif- " + dif + " sin-" + Math.Sin(dif) + " - ";
-                           richTextBox1.Text += i + " sum= " + sum;
-                           test++;
-                           richTextBox1.Text += '\n';
-                       }*/
-                //    y[i] = O[i] + (w[i] + sum) * dt;
-                //    O[i] = y[i];
-                //    this.chart1.Series[i].Points.AddXY(t * tmax, O[i]);
-                //    i++;
-                //}
-                //i = 0;
-
-
+                
                 graph3(ref O, t);
 
                     t += dt;
@@ -573,7 +535,18 @@ namespace NIR
                 MessageBox.Show("Одно из значений некорректно\r\n введите корректное значение", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
-            
+            if (checkBox1.Checked)
+            {
+                if ((Convert.ToInt32(textBox6.Text) <= (N / 2 + 1)) || (Convert.ToInt32(textBox6.Text) >= N))
+                {
+                    MessageBox.Show("СигмаG должна быть в интервале [N/2+1,N]", "СигмаG", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+                if (!(Convert.ToInt32(textBox2.Text) <= (N / 2)) || !(Convert.ToInt32(textBox2.Text) >= 0))
+                {
+                    MessageBox.Show("СигмаN должна быть в интервале [0,N/2]", "СигмаN", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+            }
+
         }
       
         private void Enter(object sender, KeyEventArgs e)
@@ -743,13 +716,7 @@ namespace NIR
 
             }
             catch (Exception ex) { }
-            if (checkBox1.Checked)
-            {
-                if ((Convert.ToInt32(textBox6.Text) <= (N / 2 + 1) )||(Convert.ToInt32(textBox6.Text)>=N))
-                {
-                    MessageBox.Show("СигмаG должна быть в интервале [N/2+1,N]", "СигмаG", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-                }
-            }
+           
         }
 
         private void textBox2_Validating(object sender, CancelEventArgs e)
@@ -771,13 +738,7 @@ namespace NIR
             }
             catch (Exception ex) { }
             
-            if (checkBox1.Checked)
-            {
-                if (!(Convert.ToInt32(textBox2.Text) <= (N / 2)) || !(Convert.ToInt32(textBox2.Text) >= 0))
-                {
-                    MessageBox.Show("СигмаN должна быть в интервале [0,N/2]", "СигмаN", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-                }
-            }
+            
         }
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
