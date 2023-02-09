@@ -184,16 +184,35 @@ namespace NIR
             dif = (O[j] - O[i]);
             return sigma * Math.Sin(dif);
         }
-        
+        double shecksigma(bool check,int nom)
+        {
+            if (check)
+            {
+                if(nom==1)
+                {
+                    sigma = Convert.ToDouble(textBox2.Text);
+                }
+                if (nom == 2)
+                {
+                    sigma = Convert.ToDouble(textBox6.Text);
+                }
+                if (nom == 3)
+                { sigma= Convert.ToDouble(textBox7.Text); }
+            }
+            else sigma = Convert.ToDouble(textBox2.Text);
+
+            return sigma;
+        }
         void graph1( int N,  double sigma,ref double[,]A)
         {
             double t=0,Oj,sum=0;
-            int t1 = 0, i = 0, j = 0;
+            int t1 = 0, i = 0, j = 0, nom = 1 ;
             double[] O = new double[N];
             double[] w = new double[N + 1];
             double[] y = new double[N];
             double[] sum1 = new double[N/2];
             double[] sum2 = new double[N/2];
+            bool check = false;
             while (i < N / 2)
             { sum1[i] = 0;
                 sum2[i] = 0;
@@ -229,6 +248,7 @@ namespace NIR
 
                 if (checkBox1.Checked)
                 {
+                    check = true;
                     while (i < N)
                     {
                         if (i < N / 2)
@@ -296,13 +316,13 @@ namespace NIR
             t = dt;
             
             double dif = 0, dif2 = 0;
-            if (checkBox1.Checked)
-            {
+          //  if (check)
+          //  {
                 while (t1 < tmax)
                 {
 
-                    sigma = Convert.ToDouble(textBox2.Text);
-                    sigma2 = Convert.ToDouble(textBox6.Text);
+                    sigma = shecksigma(check, 1);
+                    sigma2 = shecksigma(check, 2);
                     while (i < N / 2)
                     { 
                         
@@ -326,7 +346,7 @@ namespace NIR
                         i++;
                     }
                     j = 0;
-                    sigma = Convert.ToDouble(textBox7.Text);
+                    sigma = shecksigma(check, 3);
                     while (i < N)
                     {
 
@@ -338,7 +358,7 @@ namespace NIR
                                 sum1[i - N / 2] += A[i, j] * sums(ref O, j, i, ref sigma);
                                 // dif2 = (O[j] - O[i]);
 
-                                sum2[i - N / 2] += A[j, i] * sums(ref O, i, j, ref sigma2);
+                                sum2[i - N / 2] += A[j, i] * sums(ref O, i, j, ref sigma);
 
                             }
                             else
@@ -372,8 +392,8 @@ namespace NIR
                     t1++;
 
                 }
-            }
-            else
+           // }
+          /*  else
             {
                 
                 sigma = Convert.ToDouble(textBox2.Text);
@@ -402,9 +422,9 @@ namespace NIR
                     graph3(ref O, t);
                     t += dt;
                     t1++;
-
+          
                 }
-            }
+            }*/
             }
         void graph2(ref double[,]A)
         {
