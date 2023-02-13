@@ -197,7 +197,7 @@ namespace NIR
                     sigma = Convert.ToDouble(textBox6.Text);
                 }
                 if (nom == 3)
-                { sigma= Convert.ToDouble(textBox7.Text); }
+                { sigma= Convert.ToDouble(textBox2.Text); }
             }
             else sigma = Convert.ToDouble(textBox2.Text);
 
@@ -487,13 +487,13 @@ namespace NIR
 
         }
       
-            static int num1 = 8,num2=11;
+            static int num1 = 6,num2=10;
         TextBox[] textBoxes = new TextBox[num1];
         Label[] labels = new Label[num2];
         public Form1()
         {
             InitializeComponent();
-           
+            chart3.Series[0].Name = "\u03C1";
             textBox1.Text = Convert.ToString(N);
             textBox2.Text = Convert.ToString(sigma);
             textBox3.Text = Convert.ToString(dt);
@@ -505,8 +505,8 @@ namespace NIR
             textBoxes[3] = textBox4;
             textBoxes[4] = textBox5;
             textBoxes[5] = textBox6;
-            textBoxes[6] = textBox7;
-            textBoxes[7] = textBox8;
+           
+            
 
 
             labels[0] = label3;
@@ -519,7 +519,12 @@ namespace NIR
             labels[7] = label7;
             labels[8] = label8;
             labels[9] = label10;
-            labels[10] = label11;
+            
+            labels[1].Text = "\u03C3=";
+            labels[7].Text = "Нач. \u03B8";
+            labels[8].Text = "Нач. \u03C9";
+            labels[9].Text = "\u03C3 =";
+            
 
 
         }
@@ -545,9 +550,9 @@ namespace NIR
             graph1(N, sigma,ref A);             
                
                      
-            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "")
+            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "" || textBox6.Text == "")
             {
-                MessageBox.Show("нет данных\r\n введите данные и нажмите 'Старт'", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show("нет всех данных\r\n введите недостающие данные и нажмите 'Старт'", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
             if ((Convert.ToInt32(textBox1.Text) < 1) || (Convert.ToDouble(textBox2.Text) <= 0) || (Convert.ToDouble(textBox3.Text) <= 0) || (Convert.ToInt32(textBox5.Text)>N/2))
@@ -559,11 +564,11 @@ namespace NIR
             {
                 if ((Convert.ToInt32(textBox6.Text) <= (N / 2 + 1)) || (Convert.ToInt32(textBox6.Text) >= N))
                 {
-                    MessageBox.Show("СигмаG должна быть в интервале [N/2+1,N]", "СигмаG", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    MessageBox.Show("\u03C3 G должна быть в интервале [N/2+1,N]", "\u03C3 G", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
                 if (!(Convert.ToInt32(textBox2.Text) <= (N / 2)) || !(Convert.ToInt32(textBox2.Text) >= 0))
                 {
-                    MessageBox.Show("СигмаN должна быть в интервале [0,N/2]", "СигмаN", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    MessageBox.Show("\u03C3 N должна быть в интервале [0,N/2]", "\u03C3 N", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 }
             }
 
@@ -666,13 +671,13 @@ namespace NIR
 
         private void button2_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 6; i++)
             {
                 textBoxes[i].Visible = false;
 
             }
             checkBox1.Visible = true;
-            for (int i = 0; i <= 8; i++)
+            for (int i = 0; i <= 7; i++)
             {
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
@@ -681,39 +686,40 @@ namespace NIR
             type = 2;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
-            labels[1].Text = "Сигма=";
+            labels[1].Text = "\u03C3 =";
             labels[5].Text = "Кольцо";
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            
-            
-            
+
+
+            textBoxes[1].Text = "5";
             if (checkBox1.Checked)
             {
-                labels[1].Text = "СигмаN=";
-                Series mySeries = new Series("RhoG");
-                mySeries.ChartType = SeriesChartType.Line;
-                mySeries.BorderWidth = 2;
-                chart3.Series.Add(mySeries);
-                label10.Visible = true;
+                labels[1].Text = "\u03C3\u2099 =";
+                Series mySeries = new Series("\u03C1 G");
                 label11.Visible = true;
+                mySeries.ChartType = SeriesChartType.Line;
+                mySeries.BorderWidth = 2;           
+                chart3.Series.Add(mySeries);
+                chart1.ChartAreas[0].AxisY.Maximum = Math.Round(2 * Math.PI, 3);
+                textBoxes[5].Text = "7";
                 textBoxes[4].Visible = false;
                 textBoxes[5].Visible = true;
-                textBoxes[6].Visible = true;
+                labels[9].Visible = true;
                 labels[6].Visible = false;
 
             }
             else
             {
-                labels[1].Text = "Сигма=";
+                labels[1].Text = "\u03C3 =";
                 chart3.Series.RemoveAt(1);
-                label10.Visible = false;
+                chart1.ChartAreas[0].AxisY.Maximum = 30;
                 label11.Visible = false;
                 textBoxes[4].Visible = true;
                 textBoxes[5].Visible = false;
-                textBoxes[6].Visible = false;
+                labels[9].Visible = false;
                 labels[6].Visible = true;
             }
 
@@ -729,7 +735,7 @@ namespace NIR
 
                 if (isNumber == false)
                 {
-                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "СигмаG", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "\u03C3 G", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                     e.Cancel = true;
                 }
 
@@ -745,12 +751,12 @@ namespace NIR
 
             try
             {
-                int numericValue;
-                bool isNumber = int.TryParse(textBox2.Text, out numericValue);
+                double numericValue;
+                bool isNumber = double.TryParse(textBox2.Text, out numericValue);
 
                 if (isNumber == false)
                 {
-                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "Сигма", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                    DialogResult dr = MessageBox.Show("Значение должно быть числом", "\u03C3", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                     e.Cancel = true;
                 }
 
@@ -836,7 +842,8 @@ namespace NIR
         private void button1_Click(object sender, EventArgs e)
         {
             checkBox1.Visible = false;
-            for (int i = 0; i < 8; i++)
+            checkBox1.Checked = false;
+            for (int i = 0; i < 6; i++)
             {
                textBoxes[i].Visible = false;
                 
@@ -850,7 +857,8 @@ namespace NIR
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
             textBoxes[4].Visible = false;
-            labels[1].Text = "Сигма=";
+            textBoxes[1].Text = "0,07";
+            labels[1].Text = "\u03C3 =";
             labels[6].Visible = false;
             labels[5].Text = "Все со всеми";
             
