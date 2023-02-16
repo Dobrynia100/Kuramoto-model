@@ -14,8 +14,8 @@ namespace NIR
         public AboutBox1()
         {
             InitializeComponent();
-            this.Text = String.Format("Модель Курамото");//значению свойства Text указанного на объект AboutBox1 класса AboutBox1 указателем this присваевается значение метода Format класса string с параметром типом string
-            this.labelProductName.Text = AssemblyProduct;
+            this.Text = String.Format("Научная исследовательская работа");//значению свойства Text указанного на объект AboutBox1 класса AboutBox1 указателем this присваевается значение метода Format класса string с параметром типом string
+            this.labelProductName.Text = "Модель Курамото";
             this.labelVersion.Text = String.Format("Версия {0}", AssemblyVersion);
             this.labelCopyright.Text = "Авдеев Леонид 381907-3";
             this.labelCompanyName.Text = "ННГУ им.Н. И. Лобачевского";

@@ -723,10 +723,10 @@ namespace NIR
                 chart3.Series.Add(mySeries);
                 chart1.ChartAreas[0].AxisY.Maximum = Math.Round(2 * Math.PI, 3);
                 textBoxes[5].Text = "7";
-                textBoxes[4].Visible = false;
+                textBoxes[4].Enabled = false;
                 textBoxes[5].Visible = true;
                 labels[9].Visible = true;
-                labels[6].Visible = false;
+                labels[6].Enabled = false;
                 labels[5].Text = "Два кольца";
 
             }
@@ -738,10 +738,10 @@ namespace NIR
                 chart1.ChartAreas[0].AxisY.Maximum = 30;
                 label11.Visible = false;
                 
-                textBoxes[4].Visible = true;
+                textBoxes[4].Enabled = true;
                 textBoxes[5].Visible = false;
                 labels[9].Visible = false;
-                labels[6].Visible = true;
+                labels[6].Enabled = true;
                 labels[5].Text = "Кольцо";
             }
 
