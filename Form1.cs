@@ -20,6 +20,7 @@ namespace NIR
         double tmax = 2000;
         int K = 1;
         bool downl = false;
+        bool pressed = false;
         Random rnd = new Random();
         int type = 1;
         double[] getO(int N)
@@ -52,9 +53,7 @@ namespace NIR
             double sum_cos = 0;
             double sum_sin = 0;
 
-            double dt = Convert.ToDouble(textBoxes[2].Text);
-            //int iterations = (int)((tmax - 0) / dt);
-            //double[] rho =new double[];
+            double dt = Convert.ToDouble(textBoxes[2].Text);         
             double rho = 0;
             int j = 0;
 
@@ -115,36 +114,10 @@ namespace NIR
                 }
             }
 
-            if (type == 2)
+            if (type == 2 )
             {
-                if (checkBox1.Checked)
-                {
-                    while (i < N / 2)
-                    {
-                        A[i, i + N / 2] = 1;
-                        A[i + N / 2, i] = 1;
-                        while (j < N / 2)
-                        {
-                            if (j != i)
-                            {
-                                A[i, j] = 1;
-                                A[i + N / 2, j + N / 2] = 1;
-                            }
-                            j++;
-                        }
-                        j = 0;
-                        i++;
-                    }
-                    i = 0;
-
-
-
-                }
-                else
-                {
-
-
-
+                
+               
                     while (i < N)
                     {
 
@@ -172,10 +145,30 @@ namespace NIR
 
                     i = 0;
                     j = 0;
-
-                }
             }
+            if (type == 3)
+            {
+                while (i < N / 2)
+                {
+                    A[i, i + N / 2] = 1;
+                    A[i + N / 2, i] = 1;
+                    while (j < N / 2)
+                    {
+                        if (j != i)
+                        {
+                            A[i, j] = 1;
+                            A[i + N / 2, j + N / 2] = 1;
+                        }
+                        j++;
+                    }
+                    j = 0;
+                    i++;
+                }
+                i = 0;
 
+
+
+            }
             return A;
         }
        static double sums(ref double[] O, int i, int j, ref double sigma)
@@ -298,16 +291,23 @@ namespace NIR
                 string o,w1;
                 while (i < N)
                 {
+                    if (checkBox1.Checked)
+                    {
+                        check = true;
+                    }
                     o = richTextBox2.Text;
                     w1= richTextBox3.Text;
                     O[i] =Convert.ToDouble(o.Split(' ')[i]);
                     y[i] = O[i];
                     w[i]= Convert.ToDouble(w1.Split(' ')[i]);
+
                     this.chart1.Series[i].Points.AddXY(0, y[i]);
                     i++;
                 }
                 i = 0;
+                downl = false;
                 graph3(ref O,t);
+                
             }
             
             
@@ -316,8 +316,7 @@ namespace NIR
             t = dt;
             
             double dif = 0, dif2 = 0;
-          //  if (check)
-          //  {
+         
                 while (t1 < tmax)
                 {
 
@@ -392,39 +391,7 @@ namespace NIR
                     t1++;
 
                 }
-           // }
-          /*  else
-            {
-                
-                sigma = Convert.ToDouble(textBox2.Text);
-                while (t1 < tmax)
-                {
-                    while (i < N)
-                    {
-                        sum = 0;
-                        while (j < N)
-                        {
-                            if ((j != i) || A[i, j] != 0)
-                            {
-                                dif = (O[j] - O[i]);
-                                sum += A[i, j] * sigma * Math.Sin(dif);
-
-                            }
-                            j++;
-                        }
-                        j = 0;
-
-                        O[i] = O[i] + (w[i] + sum) * dt;
-                        this.chart1.Series[i].Points.AddXY(t * tmax, O[i]);
-                        i++;
-                    }
-                    i = 0;
-                    graph3(ref O, t);
-                    t += dt;
-                    t1++;
-          
-                }
-            }*/
+        
             }
         void graph2(ref double[,]A)
         {
@@ -448,7 +415,7 @@ namespace NIR
 
                 }
             }
-            if (type == 2)
+            if (type == 2||type==3)
             {
                int i = 1,j = 1;
               
@@ -478,7 +445,6 @@ namespace NIR
             double rho = getrho(O,false);
               this.chart3.Series[0].Points.AddXY(Math.Round(t*tmax,8), rho);
             
-            //  this.chart3.Series[0].Points.AddY(rho);
             if (checkBox1.Checked)
             {
                 double rhoG = getrho(O, true);
@@ -531,26 +497,38 @@ namespace NIR
       
         private void Start_Click(object sender, EventArgs e)
         {
-            N = Convert.ToInt32(textBox1.Text);
-            sigma = Convert.ToDouble(textBox2.Text);
-            dt=Convert.ToDouble(textBox3.Text);
-            tmax = Convert.ToDouble(textBox4.Text);
-            K= Convert.ToInt32(textBox5.Text);
-            chart1.Series.Clear();
-            this.chart2.Enabled = true;
-            double[,] A = new double[N, N];
-            A = checkcon(K, A);
-            graph2(ref A);
-            for (int i = 0; i < this.chart3.Series.Count; i++)
+            if (pressed)
             {
+                N = Convert.ToInt32(textBox1.Text);
+                sigma = Convert.ToDouble(textBox2.Text);
+                dt = Convert.ToDouble(textBox3.Text);
+                tmax = Convert.ToDouble(textBox4.Text);
+                K = Convert.ToInt32(textBox5.Text);
+                chart1.Series.Clear();
+                if (downl == false)
+                {
+                    richTextBox2.Clear();
+                    richTextBox3.Clear();
+                }
+                this.chart2.Enabled = true;
+                double[,] A = new double[N, N];
+                A = checkcon(K, A);
+                graph2(ref A);
+                for (int i = 0; i < this.chart3.Series.Count; i++)
+                {
 
-                this.chart3.Series[i].Points.Clear();
-                this.chart3.Series[i].Points.AddY(0);
+                    this.chart3.Series[i].Points.Clear();
+                    this.chart3.Series[i].Points.AddY(0);
+                }
+                graph1(N, sigma, ref A);
+                
             }
-            graph1(N, sigma,ref A);             
-               
-                     
-            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "" || textBox6.Text == "")
+            else
+            {
+                MessageBox.Show("Выберите режим", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "" )
             {
                 MessageBox.Show("нет всех данных\r\n введите недостающие данные и нажмите 'Старт'", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
@@ -560,7 +538,7 @@ namespace NIR
                 MessageBox.Show("Одно из значений некорректно\r\n введите корректное значение", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
-            if (checkBox1.Checked)
+            if (checkBox1.Checked && type==2)
             {
                 if ((Convert.ToInt32(textBox6.Text) <= (N / 2 + 1)) || (Convert.ToInt32(textBox6.Text) >= N))
                 {
@@ -569,6 +547,11 @@ namespace NIR
                 if (!(Convert.ToInt32(textBox2.Text) <= (N / 2)) || !(Convert.ToInt32(textBox2.Text) >= 0))
                 {
                     MessageBox.Show("\u03C3 N должна быть в интервале [0,N/2]", "\u03C3 N", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                }
+                if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox6.Text == "")
+                {
+                    MessageBox.Show("нет всех данных\r\n введите недостающие данные и нажмите 'Старт'", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    return;
                 }
             }
 
@@ -589,11 +572,13 @@ namespace NIR
         private void save(object sender, EventArgs e)
         {
 
-            if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "")
+            if ((textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "") || (checkBox1.Checked && textBox6.Text == "")||(checkBox1.Checked==false && type==2 && textBox5.Text == ""))
             {
-                MessageBox.Show("нет всех данных\r\n заполните пустые ячейки", "Метод курамото", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                
+                MessageBox.Show("нет всех данных\r\n заполните пустые ячейки", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
+            
 
             SaveFileDialog sf;
             sf = new SaveFileDialog();
@@ -603,17 +588,26 @@ namespace NIR
            
             sf.ShowDialog();
             filename = sf.FileName;
-            inf[0] = textBoxes[0].Text;
+
+            inf[0] = Convert.ToString(type); 
+            inf[1] = textBoxes[0].Text;
            
             
-                inf[1] = richTextBox2.Text+ richTextBox3.Text;
-            
            
-            for (int i = 1; i < num1; i++)
-            {
+            for (int i = 1; i < num1-2; i++)
+            {          
                 inf[i+1] = textBoxes[i].Text;
             }
-                try
+            if (type == 2)
+            {
+                inf[num1 - 1] = textBox5.Text;
+                
+            }
+            if (type==3)
+            { inf[num1] = textBox6.Text; }
+
+            inf[1+num1] = richTextBox2.Text + richTextBox3.Text;
+            try
             {
                  File.WriteAllLines(filename, inf);
             }
@@ -629,6 +623,7 @@ namespace NIR
 
         private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
             OpenFileDialog of;
             of = new OpenFileDialog();
             of.InitialDirectory = "c:\\";
@@ -636,29 +631,49 @@ namespace NIR
             string text,tex1,tex2;
             if (of.ShowDialog() == DialogResult.OK)
             {
+                richTextBox2.Clear();
+                richTextBox3.Clear();
                 var fileStream = of.OpenFile();
                 StreamReader reader = new StreamReader(fileStream);
-                N = Convert.ToInt32(reader.ReadLine()); 
-                textBoxes[0].Text =Convert.ToString(N);
-                for (int i = 1; i < 2*N+num1; i++)
+                type = Convert.ToInt32(reader.ReadLine());
+                N = Convert.ToInt32(reader.ReadLine());
+                textBoxes[0].Text = Convert.ToString(N);
+                if (type == 1)
+                {
+                    button1_Click(sender, e);
+                    checkBox1.Checked = false;
+                }
+                if (type == 2)
+                {
+                    button2_Click(sender, e);
+                    checkBox1.Checked = false;
+                }
+                if (type == 3)
+                {
+                    button2_Click(sender, e);
+                    checkBox1.Checked = true;
+                }
+                for (int i = 1; i < 2 * N + num1; i++)
                 {
                     text = reader.ReadLine();
-                 
-                    
-                    if (i<= N)
-                    {                     
-                        richTextBox2.Text += text;                    
-                    }
-                    else if(i>N && i<=2*N)
-                    { richTextBox3.Text += text; }else
-                        if (i > 2*N+1)
+
+                    if (text == "")
+                    { text = "0"; }
+                    if (i < num1)
                     {
-                        //richTextBox1.Text += text;
-                        textBoxes[i-2*N-1].Text = text;
+                        textBoxes[i].Text = text;
                     }
-                    downl = true;
-                    
+                    else if (i >= num1 && i < num1 + N)
+                    { richTextBox2.Text += text; }
+                    else
+                        if (i >= num1+ N)
+                    {
+                        richTextBox3.Text += text;
+
+                    }
                 }
+                downl = true;                            
+                
                 
             }
         }
@@ -671,6 +686,7 @@ namespace NIR
 
         private void button2_Click(object sender, EventArgs e)
         {
+            pressed = true;
             for (int i = 0; i < 6; i++)
             {
                 textBoxes[i].Visible = false;
@@ -682,6 +698,8 @@ namespace NIR
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
+
+            textBoxes[1].Text = "5";
             labels[6].Text = "K=";
             type = 2;
             richTextBox2.Visible = true;
@@ -694,9 +712,9 @@ namespace NIR
         {
 
 
-            textBoxes[1].Text = "5";
             if (checkBox1.Checked)
             {
+                type = 3;
                 labels[1].Text = "\u03C3\u2099 =";
                 Series mySeries = new Series("\u03C1 G");
                 label11.Visible = true;
@@ -709,18 +727,22 @@ namespace NIR
                 textBoxes[5].Visible = true;
                 labels[9].Visible = true;
                 labels[6].Visible = false;
+                labels[5].Text = "Два кольца";
 
             }
             else
             {
+                type = 2;
                 labels[1].Text = "\u03C3 =";
                 chart3.Series.RemoveAt(1);
                 chart1.ChartAreas[0].AxisY.Maximum = 30;
                 label11.Visible = false;
+                
                 textBoxes[4].Visible = true;
                 textBoxes[5].Visible = false;
                 labels[9].Visible = false;
                 labels[6].Visible = true;
+                labels[5].Text = "Кольцо";
             }
 
 
@@ -841,6 +863,7 @@ namespace NIR
 
         private void button1_Click(object sender, EventArgs e)
         {
+            pressed = true;
             checkBox1.Visible = false;
             checkBox1.Checked = false;
             for (int i = 0; i < 6; i++)
