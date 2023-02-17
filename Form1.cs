@@ -196,6 +196,18 @@ namespace NIR
 
             return sigma;
         }
+       /* double RungeKutta(double theta,double[] O,int i)
+        {
+            double k1, k2, k3, k4;
+            k1 = theta;
+            theta_k1[i] = O[i] + k1 / 2;
+            k2 = kuramoto(i, theta_k1) * dt;
+            theta_k2[i] = theta[i] + k2 / 2;
+            k3 = kuramoto(i, theta_k2) * dt;
+            theta_k3[i] = theta[i] + k3 / 2;
+            k4 = kuramoto(i, theta_k3) * dt;
+            theta_next[i] = theta[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+        }*/
         void graph1( int N,  double sigma,ref double[,]A)
         {
             double t=0,Oj,sum=0;
@@ -221,24 +233,11 @@ namespace NIR
                 i++;
             }
             i = 0;
-            // Oi[0] = 5.72580022079391;
-            //Oi[1] = 5.710908815279564;
-            //Oi[2] = 5.87267642803626;
-            //Oi[3] = 3.48154033368296;
+            
             if (downl == false)
             {
                 O=getO(N);
-                //O[0] = 1.19746912786187;
-                //O[1] = 5.37222573018109;
-                //O[2] = 4.15683965357519;
-                //O[3] = 3.393337227559;
-                //O[4] = 2.76237955956287;
-                //O[5] = 3.40766243446232;
-                //O[6] = 1.9237057492475;
-                //O[7] = 2.66084160479506;
-                //O[8] = 2.47588373672276;
-                //O[9] = 1.8025766354716;
-
+               
                 if (checkBox1.Checked)
                 {
                     check = true;
@@ -272,18 +271,6 @@ namespace NIR
                 }
                 i = 0;
 
-                //   textBox3.Text =Convert.ToString(O);
-                //w[0] = 1.34370677305558;
-                //w[1] = 1.21084567937574;
-                //w[2] = 1.09845071127566;
-                //w[3] = 0.653441705346779;
-                //w[4] = 0.864471862262335;
-                //w[5] = 9.53867130169583;
-                //w[6] = 10.1679832230639;
-                //w[7] = 10.0354543074665;
-                //w[8] = 10.1036970664764;
-                //w[9] = 10.1581068163077;
-
 
             }
             else
@@ -314,15 +301,15 @@ namespace NIR
       
             
             t = dt;
-            
+           
             double dif = 0, dif2 = 0;
          
-                while (t1 < tmax)
+                while (t1 < (tmax/dt))
                 {
 
                     sigma = shecksigma(check, 1);
                     sigma2 = shecksigma(check, 2);
-                    while (i < N / 2)
+                    while (i < N / 2)//вычисление первой и четвертой четверти
                     { 
                         
                         while (j < N / 2)
@@ -349,13 +336,12 @@ namespace NIR
                     while (i < N)
                     {
 
-                        while (j < N / 2)
-                        {
+                        while (j < N / 2)//вычисление второй и третьей четверти
+                    {
                             if ((j != i) || A[i, j] != 0)
                             {
-                                //  dif = (O[i] - O[j]);
+
                                 sum1[i - N / 2] += A[i, j] * sums(ref O, j, i, ref sigma);
-                                // dif2 = (O[j] - O[i]);
 
                                 sum2[i - N / 2] += A[j, i] * sums(ref O, i, j, ref sigma);
 
@@ -370,12 +356,16 @@ namespace NIR
                             j++;
                         }
                         y[i - N / 2] = O[i - N / 2] + (w[i - N / 2] + sum1[i - N / 2]) * dt;
+                    
                         O[i - N / 2] = y[i - N / 2];
-                        this.chart1.Series[i - N / 2].Points.AddXY(t * tmax, O[i - N / 2]);
+                        this.chart1.Series[i - N / 2].Points.AddXY(t1, O[i - N / 2]);
 
                         y[i] = O[i] + (w[i] + sum2[i - N / 2]) * dt;
+                      //  dif2= (w[i] + sum2[i - N / 2]) * dt;
+                        
+
                         O[i] = y[i];
-                        this.chart1.Series[i].Points.AddXY(t * tmax, O[i]);
+                        this.chart1.Series[i].Points.AddXY(t1, O[i] );
 
 
                         j = 0;
@@ -650,6 +640,7 @@ namespace NIR
                 }
                 if (type == 3)
                 {
+                    
                     button2_Click(sender, e);
                     checkBox1.Checked = true;
                 }
@@ -698,7 +689,7 @@ namespace NIR
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
-
+            chart1.ChartAreas[0].AxisY.Maximum = 50;
             textBoxes[1].Text = "5";
             labels[6].Text = "K=";
             type = 2;
@@ -721,7 +712,7 @@ namespace NIR
                 mySeries.ChartType = SeriesChartType.Line;
                 mySeries.BorderWidth = 2;           
                 chart3.Series.Add(mySeries);
-                chart1.ChartAreas[0].AxisY.Maximum = Math.Round(2 * Math.PI, 3);
+                chart1.ChartAreas[0].AxisY.Maximum = 50;
                 textBoxes[5].Text = "7";
                 textBoxes[4].Enabled = false;
                 textBoxes[5].Visible = true;
@@ -735,9 +726,9 @@ namespace NIR
                 type = 2;
                 labels[1].Text = "\u03C3 =";
                 chart3.Series.RemoveAt(1);
-                chart1.ChartAreas[0].AxisY.Maximum = 30;
-                label11.Visible = false;
                 
+                label11.Visible = false;
+                chart1.ChartAreas[0].AxisY.Maximum = 50;
                 textBoxes[4].Enabled = true;
                 textBoxes[5].Visible = false;
                 labels[9].Visible = false;
@@ -877,6 +868,7 @@ namespace NIR
                 labels[i].Visible = true;
             }
             type = 1;
+            chart1.ChartAreas[0].AxisY.Maximum = 50;
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
             textBoxes[4].Visible = false;
