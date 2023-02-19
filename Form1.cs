@@ -15,6 +15,7 @@ namespace NIR
     public partial class Form1 : Form
     {
         double sigma = 5, sigma2 = 9;
+       
         double dt = 0.01;
         int N = 10;
         double tmax = 2000;
@@ -23,6 +24,8 @@ namespace NIR
         bool pressed = false;
         Random rnd = new Random();
         int type = 1;
+     
+
         double[] getO(int N)
         {
             int i = 0;
@@ -168,14 +171,15 @@ namespace NIR
 
 
 
+               
             }
             return A;
         }
-       static double sums(ref double[] O, int i, int j, ref double sigma)
+       static double sums(ref double[] O, int i, int j, ref double[,] sigma)
         {
             double dif = 0;
             dif = (O[j] - O[i]);
-            return sigma * Math.Sin(dif);
+            return sigma[i,j] * Math.Sin(dif);
         }
         double shecksigma(bool check,int nom)
         {
@@ -196,19 +200,80 @@ namespace NIR
 
             return sigma;
         }
-       /* double RungeKutta(double theta,double[] O,int i)
+        void conmatrix(double[,]A,double[,]B,double[]C)
         {
-            double k1, k2, k3, k4;
-            k1 = theta;
-            theta_k1[i] = O[i] + k1 / 2;
-            k2 = kuramoto(i, theta_k1) * dt;
-            theta_k2[i] = theta[i] + k2 / 2;
-            k3 = kuramoto(i, theta_k2) * dt;
-            theta_k3[i] = theta[i] + k3 / 2;
-            k4 = kuramoto(i, theta_k3) * dt;
-            theta_next[i] = theta[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
-        }*/
-        void graph1( int N,  double sigma,ref double[,]A)
+            for (int i = 0; i < N; i++)
+            {
+                int bIndex = 0;
+                C[i] = 0;
+                for (int j = 0; j < N; j++)
+                {
+                    if (A[i,j] == 1)
+                    {
+                        B[i,bIndex] = j;
+                        bIndex++;
+                        C[i]++;
+                    }
+                }
+            }
+        }
+        double kuramoto(int i, double[] O,double[] w,double[,] sigma,double[,]B,double[] C) // С оптимизацией 1
+        {
+            double sum = 0;
+
+            for (int j = 0; j < C[i]; j++)
+            {
+                sum += sigma[i,(int)B[i,j]] * Math.Sin(O[(int)B[i,j]] - O[i]);
+            }
+
+            return w[i] + sum;
+        }
+        void Fillsigma(double[,]sigma,bool check)
+        {
+            
+                for (int i = 0; i < N; i++)
+                {
+                for (int j = 0; j < N; j++)
+                {
+                    if (check)
+                    {
+                        if ((i >= 0 && i < N/2) && (j >= 0 || j < N/2))
+                    {
+                        sigma[i,j] = Convert.ToDouble(textBox2.Text);
+                    }
+                    if ((((i >= N/2 && i < N) && (j >= 0 && j < N/2)) || ((i >= 0 && i < N/2) && (j >= N/2 && j < N))))
+                    {
+                        sigma[i,j] = Convert.ToDouble(textBox2.Text);
+                    }
+                    if ((i >= N/2 && i < N) && (j >= N/2 && j < N))
+                    {
+                        sigma[i,j] = Convert.ToDouble(textBox6.Text);
+                    }
+                }
+                    else sigma[i, j] = Convert.ToDouble(textBox2.Text);
+
+                }
+                }
+                
+            
+        }
+        double RungeKutta(double[] O,int i, double[] w, double[,] sigma, double[,] B, double[] C)
+         {
+             double k1, k2, k3, k4;
+            
+            double[] theta_k1 = new double[N];
+            double[] theta_k2 = new double[N];
+            double[] theta_k3 = new double[N];
+            k1 = kuramoto(i, O, w, sigma, B, C);
+             theta_k1[i] = O[i] + k1 / 2;
+             k2 = kuramoto(i, theta_k1,w,sigma,B,C) * dt;
+             theta_k2[i] = O[i] + k2 / 2;
+             k3 = kuramoto(i, theta_k2, w, sigma, B, C) * dt;
+             theta_k3[i] = O[i] + k3 / 2;
+             k4 = kuramoto(i, theta_k3, w, sigma, B, C) * dt;       
+            return O[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+        }
+        void graph1( int N, ref double[,]A)
         {
             double t=0,Oj,sum=0;
             int t1 = 0, i = 0, j = 0, nom = 1 ;
@@ -217,6 +282,7 @@ namespace NIR
             double[] y = new double[N];
             double[] sum1 = new double[N/2];
             double[] sum2 = new double[N/2];
+            double[,] sigma= new double[N, N];
             bool check = false;
             while (i < N / 2)
             { sum1[i] = 0;
@@ -301,24 +367,29 @@ namespace NIR
       
             
             t = dt;
-           
+            double[,] B = new double[N, N];
+            double[] C = new double[N];
+            Fillsigma(sigma,check);
+            conmatrix(A,B,C);
             double dif = 0, dif2 = 0;
          
                 while (t1 < (tmax/dt))
                 {
 
-                    sigma = shecksigma(check, 1);
-                    sigma2 = shecksigma(check, 2);
+                // sigma = shecksigma(check, 1);//функция выбора необходимой сигмы для выбранного режима 
+                // sigma2 = shecksigma(check, 2);
+                if (checkBox2.Checked)
+                {
                     while (i < N / 2)//вычисление первой и четвертой четверти
-                    { 
-                        
+                    {
+
                         while (j < N / 2)
                         {
                             if ((j != i) || A[i, j] != 0)
                             {
 
                                 sum1[i] += A[i, j] * sums(ref O, i, j, ref sigma);
-                                sum2[i] += A[i + N / 2, j + N / 2] * sums(ref O, i + N / 2, j + N / 2, ref sigma2);
+                                sum2[i] += A[i + N / 2, j + N / 2] * sums(ref O, i + N / 2, j + N / 2, ref sigma);
 
                             }
                             else
@@ -332,12 +403,12 @@ namespace NIR
                         i++;
                     }
                     j = 0;
-                    sigma = shecksigma(check, 3);
+                    //  sigma = shecksigma(check, 3);
                     while (i < N)
                     {
 
                         while (j < N / 2)//вычисление второй и третьей четверти
-                    {
+                        {
                             if ((j != i) || A[i, j] != 0)
                             {
 
@@ -356,16 +427,15 @@ namespace NIR
                             j++;
                         }
                         y[i - N / 2] = O[i - N / 2] + (w[i - N / 2] + sum1[i - N / 2]) * dt;
-                    
+
                         O[i - N / 2] = y[i - N / 2];
-                        this.chart1.Series[i - N / 2].Points.AddXY(t1, O[i - N / 2]);
+                        this.chart1.Series[i - N / 2].Points.AddXY(t1, O[i - N / 2]);//первая половина 
 
                         y[i] = O[i] + (w[i] + sum2[i - N / 2]) * dt;
-                      //  dif2= (w[i] + sum2[i - N / 2]) * dt;
-                        
+                        dif2 = (w[i] + sum2[i - N / 2]) * dt;
 
                         O[i] = y[i];
-                        this.chart1.Series[i].Points.AddXY(t1, O[i] );
+                        this.chart1.Series[i].Points.AddXY(t1, O[i]);//вторая половина
 
 
                         j = 0;
@@ -373,9 +443,12 @@ namespace NIR
                     }
                     i = 0;
                     j = 0;
-
-                
-                graph3(ref O, t);
+                }
+                if (checkBox3.Checked)
+                { y[i]=RungeKutta(O, i, w, sigma, B, C);
+                    this.chart1.Series[i].Points.AddXY(t1, O[i]);
+                }
+                graph3(ref O, t);//график ро
 
                     t += dt;
                     t1++;
@@ -487,7 +560,7 @@ namespace NIR
       
         private void Start_Click(object sender, EventArgs e)
         {
-            if (pressed)
+            if (pressed||(checkBox2.Checked||checkBox3.Checked))
             {
                 N = Convert.ToInt32(textBox1.Text);
                 sigma = Convert.ToDouble(textBox2.Text);
@@ -510,12 +583,12 @@ namespace NIR
                     this.chart3.Series[i].Points.Clear();
                     this.chart3.Series[i].Points.AddY(0);
                 }
-                graph1(N, sigma, ref A);
+                graph1(N, ref A);
                 
             }
             else
             {
-                MessageBox.Show("Выберите режим", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show("Выберите режим и метод интегрирования", "ОШИБКА", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
             if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "" || textBox4.Text == "" || textBox5.Text == "" )
@@ -832,6 +905,27 @@ namespace NIR
 
             }
             catch (Exception ex) { }
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox2.Checked)
+            {
+                checkBox3.Enabled = false;
+            }
+            else checkBox3.Enabled = true;
+
+
+
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox3.Checked)
+            {
+                checkBox2.Enabled = false;
+            }
+            else checkBox2.Enabled = true;
         }
 
         private void textBox5_Validating(object sender, CancelEventArgs e)
