@@ -183,25 +183,7 @@ namespace NIR
             dif = (O[j] - O[i]);
             return sigma[i,j] * Math.Sin(dif);
         }
-       /* double shecksigma(bool check,int nom)
-        {
-            if (check)
-            {
-                if(nom==1)
-                {
-                    sigma = Convert.ToDouble(textBox2.Text);
-                }
-                if (nom == 2)
-                {
-                    sigma = Convert.ToDouble(textBox6.Text);
-                }
-                if (nom == 3)
-                { sigma= Convert.ToDouble(textBox2.Text); }
-            }
-            else sigma = Convert.ToDouble(textBox2.Text);
-
-            return sigma;
-        }*/
+      
         void conmatrix(double[,]A,double[,]B,double[]C)
         {
             int i=0,j=0;
