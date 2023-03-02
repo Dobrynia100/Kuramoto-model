@@ -497,6 +497,7 @@ namespace NIR
             chartArea3.AxisX.Interval = 200D;
             chartArea3.AxisX.IntervalType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Number;
             chartArea3.AxisX.Maximum = 2000D;
+            chartArea3.AxisX.Minimum = 0D;
             chartArea3.Name = "ChartArea1";
             this.chart3.ChartAreas.Add(chartArea3);
             legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
@@ -508,6 +509,7 @@ namespace NIR
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             series4.Color = System.Drawing.Color.Blue;
+            series4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             series4.Legend = "Legend1";
             series4.Name = "Rho";
             this.chart3.Series.Add(series4);

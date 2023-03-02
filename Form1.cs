@@ -93,6 +93,7 @@ namespace NIR
                 i++;
             }
         }
+
         double[,] checkcon(int K, double[,] A)
         {
 
@@ -178,10 +179,11 @@ namespace NIR
        static double sums(ref double[] O, int i, int j, ref double[,] sigma)
         {
             double dif = 0;
+            
             dif = (O[j] - O[i]);
             return sigma[i,j] * Math.Sin(dif);
         }
-        double shecksigma(bool check,int nom)
+       /* double shecksigma(bool check,int nom)
         {
             if (check)
             {
@@ -199,14 +201,15 @@ namespace NIR
             else sigma = Convert.ToDouble(textBox2.Text);
 
             return sigma;
-        }
+        }*/
         void conmatrix(double[,]A,double[,]B,double[]C)
         {
-            for (int i = 0; i < N; i++)
+            int i=0,j=0;
+            while(i<N)
             {
                 int bIndex = 0;
                 C[i] = 0;
-                for (int j = 0; j < N; j++)
+                while(j<N)
                 {
                     if (A[i,j] == 1)
                     {
@@ -214,26 +217,30 @@ namespace NIR
                         bIndex++;
                         C[i]++;
                     }
+                    j++;
                 }
+                j = 0;
+                i++;
             }
         }
-        double kuramoto(int i, double[] O,double[] w,double[,] sigma,double[,]B,double[] C) // С оптимизацией 1
+        double kuramoto(int i, double[] O,double[] w,double[,] sigma,double[,]B,double[] C, double[] sum) // С оптимизацией 1
         {
-            double sum = 0;
-
-            for (int j = 0; j < C[i]; j++)
+           // double sum1=0;
+            int j = 0;
+            while (j < C[i])
             {
-                sum += sigma[i,(int)B[i,j]] * Math.Sin(O[(int)B[i,j]] - O[i]);
+                sum[i] += sigma[i,(int)B[i,j]] * Math.Sin(O[(int)B[i,j]] - O[i]);
+                j++;
             }
 
-            return w[i] + sum;
+            return w[i] + sum[i];
         }
         void Fillsigma(double[,]sigma,bool check)
         {
-            
-                for (int i = 0; i < N; i++)
+            int i = 0, j = 0;
+                while(i<N)
                 {
-                for (int j = 0; j < N; j++)
+                while(j<N)
                 {
                     if (check)
                     {
@@ -251,8 +258,10 @@ namespace NIR
                     }
                 }
                     else sigma[i, j] = Convert.ToDouble(textBox2.Text);
-
+                    j++;
                 }
+                i++;
+                j = 0;
                 }
                 
             
@@ -260,18 +269,22 @@ namespace NIR
         double RungeKutta(double[] O,int i, double[] w, double[,] sigma, double[,] B, double[] C)
          {
              double k1, k2, k3, k4;
-            
+            double[] sum = new double[N];
             double[] theta_k1 = new double[N];
             double[] theta_k2 = new double[N];
             double[] theta_k3 = new double[N];
-            k1 = kuramoto(i, O, w, sigma, B, C);
-             theta_k1[i] = O[i] + k1 / 2;
-             k2 = kuramoto(i, theta_k1,w,sigma,B,C) * dt;
-             theta_k2[i] = O[i] + k2 / 2;
-             k3 = kuramoto(i, theta_k2, w, sigma, B, C) * dt;
-             theta_k3[i] = O[i] + k3 / 2;
-             k4 = kuramoto(i, theta_k3, w, sigma, B, C) * dt;       
-            return O[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+            k1 = kuramoto(i, O, w, sigma, B, C,sum)*dt;
+            
+            O[i] = O[i] + k1 / 2;
+             k2 = kuramoto(i, O, w,sigma,B,C,sum)*dt ;
+            
+            O[i] = O[i] + k2 / 2;
+             k3 = kuramoto(i, O, w, sigma, B, C,sum)*dt ;
+           
+            O[i] = O[i] + k3/2 ;
+             k4 = kuramoto(i, O, w, sigma, B, C,sum)*dt ;
+            
+            return O[i] + dt*(k1 + 2 * k2 + 2 * k3 + k4) / 6;
         }
         void graph1( int N, ref double[,]A)
         {
@@ -362,10 +375,10 @@ namespace NIR
                 graph3(ref O,t);
                 
             }
-            
-            
-      
-            
+
+
+            if (checkBox3.Checked) chart1.ChartAreas[0].AxisY.Maximum = 50;
+
             t = dt;
             double[,] B = new double[N, N];
             double[] C = new double[N];
@@ -406,15 +419,15 @@ namespace NIR
                     //  sigma = shecksigma(check, 3);
                     while (i < N)
                     {
-
-                        while (j < N / 2)//вычисление второй и третьей четверти
+                        j = N/2;
+                        while (j < N )//вычисление второй и третьей четверти
                         {
-                            if ((j != i) || A[i, j] != 0)
+                            if (A[i, j - N / 2] != 0)
                             {
 
-                                sum1[i - N / 2] += A[i, j] * sums(ref O, j, i, ref sigma);
+                                sum1[i - N / 2] += A[i, j-N/2] * sums(ref O, (i-N/2), j, ref sigma);
 
-                                sum2[i - N / 2] += A[j, i] * sums(ref O, i, j, ref sigma);
+                                sum2[i - N / 2] += A[i, j-N/2] * sums(ref O, i, (j-N/2), ref sigma);
 
                             }
                             else
@@ -431,8 +444,7 @@ namespace NIR
                         O[i - N / 2] = y[i - N / 2];
                         this.chart1.Series[i - N / 2].Points.AddXY(t1, O[i - N / 2]);//первая половина 
 
-                        y[i] = O[i] + (w[i] + sum2[i - N / 2]) * dt;
-                        dif2 = (w[i] + sum2[i - N / 2]) * dt;
+                        y[i] = O[i] + (w[i] + sum2[i - N / 2]) * dt;                        
 
                         O[i] = y[i];
                         this.chart1.Series[i].Points.AddXY(t1, O[i]);//вторая половина
@@ -445,8 +457,21 @@ namespace NIR
                     j = 0;
                 }
                 if (checkBox3.Checked)
-                { y[i]=RungeKutta(O, i, w, sigma, B, C);
-                    this.chart1.Series[i].Points.AddXY(t1, O[i]);
+                {
+                    i = N/2;
+                    while (i < N)
+                    {
+
+                        y[i - N / 2] = RungeKutta(O, i - N / 2, w, sigma, B, C);
+                        O[i - N / 2] = y[i - N / 2];
+                        this.chart1.Series[i-N/2].Points.AddXY(t1, O[i - N / 2]);
+                        y[i] = RungeKutta(O, i, w, sigma, B, C);
+                        O[i] = y[i];
+                        this.chart1.Series[i].Points.AddXY(t1, O[i]);
+                        i++;
+                    }
+                   
+
                 }
                 graph3(ref O, t);//график ро
 
@@ -470,17 +495,17 @@ namespace NIR
             
             this.chart2.ChartAreas[0].AxisY.Maximum = N;
             this.chart2.ChartAreas[0].AxisX.Maximum = N;
-            if (type == 1)
-            {
-                for (int i = 0; i <= N; i++)
-                {
-                    this.chart2.Series[1].Points.AddXY(i, i);
+            //if (type == 1)
+            //{
+            //    for (int i = 0; i <= N; i++)
+            //    {
+            //        this.chart2.Series[1].Points.AddXY(i, i);
 
-                }
-            }
-            if (type == 2||type==3)
+            //    }
+            //}
+            if (type == 2||type==3||type==1)
             {
-               int i = 1,j = 1;
+                int i = 1, j = 1;
               
                     do
                     {
@@ -560,7 +585,7 @@ namespace NIR
       
         private void Start_Click(object sender, EventArgs e)
         {
-            if (pressed||(checkBox2.Checked||checkBox3.Checked))
+            if (pressed&&(checkBox2.Checked||checkBox3.Checked))
             {
                 N = Convert.ToInt32(textBox1.Text);
                 sigma = Convert.ToDouble(textBox2.Text);
@@ -762,7 +787,7 @@ namespace NIR
                 if (i < 5) textBoxes[i].Visible = true;
                 labels[i].Visible = true;
             }
-            chart1.ChartAreas[0].AxisY.Maximum = 50;
+            chart1.ChartAreas[0].AxisY.Maximum = 200;
             textBoxes[1].Text = "5";
             labels[6].Text = "K=";
             type = 2;
@@ -785,7 +810,7 @@ namespace NIR
                 mySeries.ChartType = SeriesChartType.Line;
                 mySeries.BorderWidth = 2;           
                 chart3.Series.Add(mySeries);
-                chart1.ChartAreas[0].AxisY.Maximum = 50;
+                chart1.ChartAreas[0].AxisY.Maximum = 200;
                 textBoxes[5].Text = "7";
                 textBoxes[4].Enabled = false;
                 textBoxes[5].Visible = true;
@@ -801,7 +826,7 @@ namespace NIR
                 chart3.Series.RemoveAt(1);
                 
                 label11.Visible = false;
-                chart1.ChartAreas[0].AxisY.Maximum = 50;
+                chart1.ChartAreas[0].AxisY.Maximum = 200;
                 textBoxes[4].Enabled = true;
                 textBoxes[5].Visible = false;
                 labels[9].Visible = false;
@@ -963,6 +988,7 @@ namespace NIR
             }
             type = 1;
             chart1.ChartAreas[0].AxisY.Maximum = 50;
+            
             richTextBox2.Visible = true;
             richTextBox3.Visible = true;
             textBoxes[4].Visible = false;
