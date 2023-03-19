@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.IO;
 using System.Globalization;
+using System.Runtime.Remoting.Messaging;
+
 namespace NIR
 {
     public partial class Form1 : Form
@@ -92,7 +94,21 @@ namespace NIR
                 j = 0;
                 i++;
             }
-        }
+        }/*
+        double[] clears(double[] mas)
+        {
+            int  j = 0;
+            
+                while (j < N/2)
+                {
+                    mas[j] = 0;
+                    j++;
+                }
+                j = 0;
+                
+            
+        return mas;
+        }*/
 
         double[,] checkcon(int K, double[,] A)
         {
@@ -205,7 +221,7 @@ namespace NIR
                 i++;
             }
         }
-        double kuramoto(int i, double[] O,double[] w,double[,] sigma,double[,]B,double[] C, double[] sum) // С оптимизацией 1
+        double kuramoto(int i, double[] O,double[] w,double[,] sigma,double[,]B,double[] C, double[] sum) 
         {
            // double sum1=0;
             int j = 0;
@@ -295,7 +311,7 @@ namespace NIR
             }
             i = 0;
             
-            if (downl == false)
+            if (downl == false)//если данные не были загружены
             {
                 O=getO(N);
                
@@ -371,8 +387,7 @@ namespace NIR
                 while (t1 < (tmax/dt))
                 {
 
-                // sigma = shecksigma(check, 1);//функция выбора необходимой сигмы для выбранного режима 
-                // sigma2 = shecksigma(check, 2);
+                
                 if (checkBox2.Checked)
                 {
                     while (i < N / 2)//вычисление первой и четвертой четверти
@@ -398,7 +413,7 @@ namespace NIR
                         i++;
                     }
                     j = 0;
-                    //  sigma = shecksigma(check, 3);
+                    
                     while (i < N)
                     {
                         j = N/2;
@@ -435,6 +450,8 @@ namespace NIR
                         j = 0;
                         i++;
                     }
+                   // sum1 = clears(sum1);
+                   // sum2 = clears(sum2);
                     i = 0;
                     j = 0;
                 }
@@ -455,7 +472,7 @@ namespace NIR
                    
 
                 }
-                graph3(ref O, t);//график ро
+                graph3(ref O, t1);//график ро
 
                     t += dt;
                     t1++;
@@ -477,16 +494,8 @@ namespace NIR
             
             this.chart2.ChartAreas[0].AxisY.Maximum = N;
             this.chart2.ChartAreas[0].AxisX.Maximum = N;
-            //if (type == 1)
-            //{
-            //    for (int i = 0; i <= N; i++)
-            //    {
-            //        this.chart2.Series[1].Points.AddXY(i, i);
-
-            //    }
-            //}
-            if (type == 2||type==3||type==1)
-            {
+            
+            
                 int i = 1, j = 1;
               
                     do
@@ -507,18 +516,18 @@ namespace NIR
                     i = 1;
                  
 
-            }
+            
 
         }
         void graph3(ref double[] O,double t)
         {
             double rho = getrho(O,false);
-              this.chart3.Series[0].Points.AddXY(Math.Round(t*tmax,8), rho);
+              this.chart3.Series[0].Points.AddXY(Math.Round(t,8), rho);
             
             if (checkBox1.Checked)
             {
                 double rhoG = getrho(O, true);
-                this.chart3.Series[1].Points.AddXY(Math.Round(t * tmax, 8), rhoG);
+                this.chart3.Series[1].Points.AddXY(Math.Round(t , 8), rhoG);
             }
 
         }
