@@ -264,25 +264,23 @@ namespace NIR
                 
             
         }
-        double RungeKutta(double[] O,int i, double[] w, double[,] sigma, double[,] B, double[] C)
+        double RungeKutta(ref double[] O,int i, double[] w, double[,] sigma, double[,] B, double[] C)
          {
              double k1, k2, k3, k4;
             double[] sum = new double[N];
-            double[] theta_k1 = new double[N];
-            double[] theta_k2 = new double[N];
-            double[] theta_k3 = new double[N];
-            k1 = kuramoto(i, O, w, sigma, B, C,sum)*dt;
+            
+            k1 = kuramoto(i, O, w, sigma, B, C,sum)*dt ;
             
             O[i] = O[i] + k1 / 2;
-             k2 = kuramoto(i, O, w,sigma,B,C,sum)*dt ;
+             k2 = kuramoto(i, O, w,sigma,B,C,sum)*dt;
             
             O[i] = O[i] + k2 / 2;
-             k3 = kuramoto(i, O, w, sigma, B, C,sum)*dt ;
+             k3 = kuramoto(i, O, w, sigma, B, C,sum)*dt;
            
-            O[i] = O[i] + k3/2 ;
-             k4 = kuramoto(i, O, w, sigma, B, C,sum)*dt ;
+            O[i] = O[i] + k3 ;
+             k4 = kuramoto(i, O, w, sigma, B, C,sum)*dt;
             
-            return O[i] + dt*(k1 + 2 * k2 + 2 * k3 + k4) / 6;
+            return O[i] + (k1 + 2 * k2 + 2 * k3 + k4) / 6;
         }
         void graph1( int N, ref double[,]A)
         {
@@ -461,10 +459,10 @@ namespace NIR
                     while (i < N)
                     {
 
-                        y[i - N / 2] = RungeKutta(O, i - N / 2, w, sigma, B, C);
+                        y[i - N / 2] = RungeKutta(ref O, i - N / 2, w, sigma, B, C);
                         O[i - N / 2] = y[i - N / 2];
                         this.chart1.Series[i-N/2].Points.AddXY(t1, O[i - N / 2]);
-                        y[i] = RungeKutta(O, i, w, sigma, B, C);
+                        y[i] = RungeKutta(ref O, i, w, sigma, B, C);
                         O[i] = y[i];
                         this.chart1.Series[i].Points.AddXY(t1, O[i]);
                         i++;
